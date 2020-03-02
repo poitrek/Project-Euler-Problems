@@ -1,5 +1,4 @@
 # Problem rozwiązany!
-# Odpowiedź: 5777
 
 def IsPrime_(n):
 
