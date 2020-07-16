@@ -1,6 +1,7 @@
 # Problem no. 27: Quadratic primes
 ###### SOLVED ######
 
+
 import numpy as np
 import time
 
@@ -14,6 +15,7 @@ class Timer:
 
 
 primes = [2, 3, 5]
+max_prime = 5
 
 # Fills the global array of prime numbers with primes less or equal N
 def find_primes(N):
@@ -27,13 +29,15 @@ def find_primes(N):
         # If the loop ended without finding a divider of c and surpassing square root of c
         if primes[i] > c_sqrt:
             primes.append(c)
+    global max_prime
+    max_prime = primes[-1]
 
 
 def is_prime(n):
     # If n is outside the checked range
     if n < 2:
         return False
-    elif n > primes[-1]:
+    elif n > max_prime:
         return 'unknown'
     elif n in primes:
         return True
@@ -68,9 +72,11 @@ def test_func(a, b, verbose=1):
 if __name__ == '__main__':
     timer = Timer()
     timer.start_measure_time()
-    find_primes(100000)
+    find_primes(5000)
+    b_primes = primes[:170]
+    primes = set(primes)
     print('{} primes found'.format(len(primes)))
-    print(primes[:10], '...')
+    # print(primes[:10], '...')
 
     # print(test_func(1, 41, verbose=0))
     # print(test_func(9, 7))
@@ -89,11 +95,11 @@ if __name__ == '__main__':
 
     max_a, max_b = 0, 0
     max_test = 1
-    for b in primes[:170]:
+    for b in b_primes:
         for a in range(-b+2, 1, 2):
             test = test_func(a, b, verbose=0)
             if test > max_test:
-                print('{}, {} => {}'.format(a, b, test))
+                # print('{}, {} => {}'.format(a, b, test))
                 max_test = test
                 max_a, max_b = a, b
 
