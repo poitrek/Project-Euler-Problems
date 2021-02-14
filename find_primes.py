@@ -33,6 +33,9 @@ def find_primes_classic(N):
 # Standard Eratosthenes Sieve
 # This function is currently the fastest
 def eratosthenes_sieve(N):
+    """Finds all primes less or equal N using Eratosthenes Sieve.
+    Currently the fastest function
+    :returns array of primes <=N"""
     # Increment once in order to remove redundancy
     N += 1
     prime = [True] * (N)
@@ -71,8 +74,8 @@ def sundaram_sieve(N):
 if __name__ == '__main__':
     Timer.start_measure_time()
     # pr = find_primes_classic(4*10**6)
-    pr = eratosthenes_sieve(10 ** 7)
-    # pr = sundaram_sieve(10**6)
+    # pr = eratosthenes_sieve(4*10**6)
+    pr = sundaram_sieve(4*10**6)
     print('Found {} primes'.format(len(pr)))
     print(pr[:10], '...', pr[-10:])
     Timer.print_time_elapsed()
