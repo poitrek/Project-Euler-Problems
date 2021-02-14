@@ -1,3 +1,6 @@
+# Problem no. 31: Coin sums
+###### SOLVED ######
+
 calls = 0
 
 # Recurrent solution without memorizing (inefficient)

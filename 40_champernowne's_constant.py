@@ -1,5 +1,5 @@
 # Problem no. 40: Champernowne's constant
-# ------ NOT SOLVED ------
+# ------ SOLVED ------
 
 # 0.12345678910111213141516...
 

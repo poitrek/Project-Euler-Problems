@@ -1,15 +1,6 @@
 # Problem no. 46: Triangular, pentagonal, and hexagonal
 
-import time
-class Timer:
-    _start_time = None
-    @classmethod
-    def start_measure_time(cls):
-        cls._start_time = time.perf_counter()
-    @classmethod
-    def print_time_elapsed(cls):
-        time_elapsed = time.perf_counter() - cls._start_time
-        print('Time elapsed: {:.3f} s'.format(time_elapsed))
+from tools.timer import Timer
 
 # N-th pentagonal number
 def p(n):
@@ -20,12 +11,10 @@ def h(n):
     return n*(2*n-1)
 
 
-
-
 # p(n) - p(n-1) = 3n-2
 # h(n) - h(n-1) = 4n-3
 
-Timer.start_measure_time()
+Timer.start_measure()
 
 # p, h = 5, 6
 # ip, ih = 2, 2
