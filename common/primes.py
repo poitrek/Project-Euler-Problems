@@ -18,8 +18,20 @@ def is_prime(n):
             return False
     return True
 
+def find_primes(N, method='eratosthenes'):
+    """Finds all prime numbers less or equal N
+    :param method: ('eratosthenes', 'sundaram', 'alg1')
+    :returns: array of primes <=N"""
+    if method == 'eratosthenes':
+        return _find_primes_eratosthenes(N)
+    elif method == 'sundaram':
+        return _find_primes_sundaram(N)
+    elif method == 'alg1':
+        return _find_primes_alg1(N)
+    else:
+        raise Exception("Invalid prime searching method")
 
-def find_primes_eratosthenes(N):
+def _find_primes_eratosthenes(N):
     """Finds all prime numbers less or equal N using Eratosthenes Sieve.
     Use only when you need array of all primes <=N.
     Currently the fastest function for this task
@@ -37,7 +49,7 @@ def find_primes_eratosthenes(N):
     return primes_tab
 
 
-def find_primes_sundaram(N):
+def _find_primes_sundaram(N):
     """Finds all primes less or equal N using Sundaram Sieve.
     Slower than Eratosthenes Sieve."""
     N = (N-1) // 2
@@ -58,7 +70,7 @@ def find_primes_sundaram(N):
     return primes
 
 
-def find_primes_alg1(N):
+def _find_primes_alg1(N):
     """Finds all primes less or equal N using method analogous
     to Eratosthenes Sieve (for each next odd number k, check
     if k is divisible by any of the already found primes).

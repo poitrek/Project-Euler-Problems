@@ -2,7 +2,7 @@
 ###### SOLVED ######
 
 from tools.timer import Timer
-from common.primes import find_primes_eratosthenes
+from common.primes import find_primes
 from math import sqrt
 
 
@@ -39,7 +39,7 @@ def has_4_factors(n, primes):
 if __name__ == '__main__':
     Timer.start_measure()
     prime_limit = int(3.2 * 10 ** 4)
-    pr = find_primes_eratosthenes(prime_limit)
+    pr = find_primes(prime_limit)
     # Limit of the iterated integers
     iter_limit = 10**6
     # length of current sequence of 4-factor ints
