@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <regex>
+#include <unordered_map>
 
 using namespace std;
 
@@ -37,7 +39,7 @@ enum SpecialHand
 
 enum SuitType
 {
-    _None,
+    _Suit_None,
     Clubs,
     Diamonds,
     Hearts,
@@ -46,7 +48,7 @@ enum SuitType
 
 enum RankType
 {
-    _None,
+    _Rank_None,
     Two,
     Three,
     Four,
@@ -88,11 +90,39 @@ public:
 class Card : public Entity
 {
 public:
-    Card() {}
-    Card(RankType rank, SuitType suit)
-        : rank(rank), suit(suit) {}
+    inline static const unordered_map<char, RankType> rank_codes = {
+        {'2', RankType::Two},
+        {'3', RankType::Three},
+        {'4', RankType::Four},
+        {'5', RankType::Five},
+        {'6', RankType::Six},
+        {'7', RankType::Seven},
+        {'8', RankType::Eight},
+        {'9', RankType::Nine},
+        {'T', RankType::Ten},
+        {'J', RankType::Jack},
+        {'Q', RankType::Queen},
+        {'K', RankType::King},
+        {'A', RankType::Ace}
+    };
+    inline static const unordered_map<char, SuitType> suit_codes = {
+        {'C', SuitType::Clubs},
+        {'D', SuitType::Diamonds},
+        {'H', SuitType::Hearts},
+        {'S', SuitType::Spades}
+    };
     RankType rank;
     SuitType suit;
+    Card() {
+        rank = RankType::_Rank_None;
+        suit = SuitType::_Suit_None;
+    }
+    Card(const string& card_code) {
+        rank = Card::rank_codes.at(card_code[0]);
+        suit = Card::suit_codes.at(card_code[1]);
+    }
+    Card(RankType rank, SuitType suit)
+        : rank(rank), suit(suit) {}
     virtual bool operator>(Entity* e) {
         if (Card* c = dynamic_cast<Card*>(e)) {
             return this->rank > c->rank || (this->rank == c->rank && this->suit > c->suit);
@@ -119,6 +149,29 @@ public:
     //     return this->rank == c.rank && this->suit == c.suit;
     // }
 };
+
+//const unordered_map<char, RankType> Card::rank_codes = {
+//    {'2', RankType::Two},
+//    {'3', RankType::Three},
+//    {'4', RankType::Four},
+//    {'5', RankType::Five},
+//    {'6', RankType::Six},
+//    {'7', RankType::Seven},
+//    {'8', RankType::Eight},
+//    {'9', RankType::Nine},
+//    {'T', RankType::Ten},
+//    {'J', RankType::Jack},
+//    {'Q', RankType::Queen},
+//    {'K', RankType::King},
+//    {'A', RankType::Ace}
+//};
+
+//const unordered_map<char, SuitType> Card::suit_codes = {
+//    {'C', SuitType::Clubs},
+//    {'D', SuitType::Diamonds},
+//    {'H', SuitType::Hearts},
+//    {'S', SuitType::Spades}
+//};
 
 class Suit : public Entity {
 public:
@@ -166,16 +219,45 @@ public:
 
 class Hand {
 public:
+    inline static const int I = 0;
+    inline static const string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
+    inline static const regex card_code_pattern = regex(Hand::card_code_pattern_string);
+    inline static const regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
+    //static 
     vector<Card> cards;
     Hand(Card c1, Card c2, Card c3, Card c4, Card c5) {
         cards = { c1, c2, c3, c4, c5 };
-        this->sort("descending");
+        sort("descending");
     }
     Hand(vector<Card>& cards) : cards(cards) {
         if (cards.size() != 5)
             throw PokerEntityException("Incorrect number of cards in a hand");
-        this->sort("descending");
+        sort("descending");
     }
+
+    Hand(string code) {
+        smatch hcp_match;
+        if (regex_match(code, hcp_match, Hand::hand_code_pattern)) {
+            cout << "yes" << endl;
+            smatch ccp_match;
+            auto match_begin =
+                sregex_iterator(code.begin(), code.end(), Hand::card_code_pattern);
+            auto match_end = sregex_iterator();
+            cout << "card codes:" << endl;
+            for (sregex_iterator i = match_begin; i != match_end; ++i) {
+                cout << "->" << (*i).str();
+                cards.push_back(Card((*i).str()));
+            }
+            cout << endl;
+        }
+        else {
+            throw PokerEntityException("Invalid hand code");
+        }
+        sort("descending");
+    }
+
+    Hand(char* code) : Hand(string(code)) {}
+
     /* Sorts cards in the hand. Use "ascending" or "descending" mode.*/
     void sort(string mode="descending") {
         if (mode == "descending") {
@@ -192,7 +274,15 @@ public:
     }
     bool operator>(Hand& hand);
     bool operator==(Hand& hand);
+    //string to_string() {
+
+    //}
 };
+
+
+//const regex Hand::card_code_pattern = regex(Hand::card_code_pattern_string);
+//const regex Hand::hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
+
 
 class SpecialHandChecker
 {
@@ -217,7 +307,7 @@ class PairChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::Pair; }
     virtual vector<Rank> check(Hand& hand) {
-        RankType pair_rank = RankType::_None;
+        RankType pair_rank = RankType::_Rank_None;
         int pair_pos;
         for (int i = 0; i < 4; i++) {
             if (hand.cards[i].rank == hand.cards[i + 1].rank) {
@@ -225,7 +315,7 @@ public:
                 pair_pos = i;
             }
         }
-        if (pair_rank == RankType::_None) {
+        if (pair_rank == RankType::_Rank_None) {
             return vector<Rank>();
         }
         else {
@@ -304,7 +394,7 @@ public:
     }
 };
 
-vector<shared_ptr<SpecialHandChecker>> handCheckers = {
+inline vector<shared_ptr<SpecialHandChecker>> handCheckers = {
     shared_ptr<HighCardChecker>(new HighCardChecker),
     shared_ptr<PairChecker>(new PairChecker),
     shared_ptr<TwoPairChecker>(new TwoPairChecker),
@@ -319,7 +409,7 @@ vector<shared_ptr<SpecialHandChecker>> handCheckers = {
 
 /* Finds the highest SpecialHand for a hand. Returns pair<special_hand_type, vector_of_ranks> where
 vector_of_ranks will be used for a comparison with a hand of the same special type.*/
-pair<SpecialHand, vector<Rank>> highestSpecialHand(Hand& hand) {
+inline pair<SpecialHand, vector<Rank>> highestSpecialHand(Hand& hand) {
     SpecialHand highest_sh;
     vector<Rank> highest_check_result;
     for (shared_ptr<SpecialHandChecker> handChecker : handCheckers) {
@@ -358,7 +448,7 @@ inline bool operator==(vector<Rank>& vr1, vector<Rank>& vr2) {
 }
 
 /* Compares two hands according to Poker rules */
-bool Hand::operator>(Hand& hand) {
+inline bool Hand::operator>(Hand& hand) {
     auto p1 = highestSpecialHand(*this);
     auto p2 = highestSpecialHand(hand);
     if (p1.first != p1.first)

@@ -18,10 +18,18 @@
     <ClCompile Include="54_poker_hands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="poker_model_2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="54_poker_hands.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="p054_poker.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
