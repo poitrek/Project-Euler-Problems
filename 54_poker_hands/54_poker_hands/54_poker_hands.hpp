@@ -37,7 +37,7 @@ enum SpecialHand
     _Last
 };
 
-enum SuitType
+enum Suit
 {
     _Suit_None,
     Clubs,
@@ -46,7 +46,7 @@ enum SuitType
     Spades
 };
 
-enum RankType
+enum Rank
 {
     _Rank_None,
     Two,
@@ -67,21 +67,21 @@ enum RankType
 class Entity
 {
 public:
-    virtual bool operator>(Entity* e) = 0;
-    virtual bool operator==(Entity* e) = 0;
-    virtual bool operator>=(Entity* e)
+    virtual bool operator>(Entity& e) = 0;
+    virtual bool operator==(Entity& e) = 0;
+    virtual bool operator>=(Entity& e)
     {
         return (*this) > e || (*this) == e;
     }
-    virtual bool operator<(Entity* e)
+    virtual bool operator<(Entity& e)
     {
         return !(*this >= e);
     }
-    virtual bool operator<=(Entity* e)
+    virtual bool operator<=(Entity& e)
     {
         return !(*this > e);
     }
-    virtual bool operator!=(Entity* e)
+    virtual bool operator!=(Entity& e)
     {
         return !(*this == e);
     }
@@ -90,41 +90,41 @@ public:
 class Card : public Entity
 {
 public:
-    inline static const unordered_map<char, RankType> rank_codes = {
-        {'2', RankType::Two},
-        {'3', RankType::Three},
-        {'4', RankType::Four},
-        {'5', RankType::Five},
-        {'6', RankType::Six},
-        {'7', RankType::Seven},
-        {'8', RankType::Eight},
-        {'9', RankType::Nine},
-        {'T', RankType::Ten},
-        {'J', RankType::Jack},
-        {'Q', RankType::Queen},
-        {'K', RankType::King},
-        {'A', RankType::Ace}
+    inline static const unordered_map<char, Rank> rank_codes = {
+        {'2', Rank::Two},
+        {'3', Rank::Three},
+        {'4', Rank::Four},
+        {'5', Rank::Five},
+        {'6', Rank::Six},
+        {'7', Rank::Seven},
+        {'8', Rank::Eight},
+        {'9', Rank::Nine},
+        {'T', Rank::Ten},
+        {'J', Rank::Jack},
+        {'Q', Rank::Queen},
+        {'K', Rank::King},
+        {'A', Rank::Ace}
     };
-    inline static const unordered_map<char, SuitType> suit_codes = {
-        {'C', SuitType::Clubs},
-        {'D', SuitType::Diamonds},
-        {'H', SuitType::Hearts},
-        {'S', SuitType::Spades}
+    inline static const unordered_map<char, Suit> suit_codes = {
+        {'C', Suit::Clubs},
+        {'D', Suit::Diamonds},
+        {'H', Suit::Hearts},
+        {'S', Suit::Spades}
     };
-    RankType rank;
-    SuitType suit;
+    Rank rank;
+    Suit suit;
     Card() {
-        rank = RankType::_Rank_None;
-        suit = SuitType::_Suit_None;
+        rank = Rank::_Rank_None;
+        suit = Suit::_Suit_None;
     }
     Card(const string& card_code) {
         rank = Card::rank_codes.at(card_code[0]);
         suit = Card::suit_codes.at(card_code[1]);
     }
-    Card(RankType rank, SuitType suit)
+    Card(Rank rank, Suit suit)
         : rank(rank), suit(suit) {}
-    virtual bool operator>(Entity* e) {
-        if (Card* c = dynamic_cast<Card*>(e)) {
+    virtual bool operator>(Entity& e) {
+        if (Card* c = dynamic_cast<Card*>(&e)) {
             return this->rank > c->rank || (this->rank == c->rank && this->suit > c->suit);
         }
         else {
@@ -132,8 +132,8 @@ public:
         }
         // throw EntityTypeException("")
     }
-    virtual bool operator==(Entity* e) {
-        if (Card* c = dynamic_cast<Card*>(e)) {
+    virtual bool operator==(Entity& e) {
+        if (Card* c = dynamic_cast<Card*>(&e)) {
             return this->rank == c->rank && this->suit == c->suit;
         }
         else {
@@ -150,72 +150,29 @@ public:
     // }
 };
 
-//const unordered_map<char, RankType> Card::rank_codes = {
-//    {'2', RankType::Two},
-//    {'3', RankType::Three},
-//    {'4', RankType::Four},
-//    {'5', RankType::Five},
-//    {'6', RankType::Six},
-//    {'7', RankType::Seven},
-//    {'8', RankType::Eight},
-//    {'9', RankType::Nine},
-//    {'T', RankType::Ten},
-//    {'J', RankType::Jack},
-//    {'Q', RankType::Queen},
-//    {'K', RankType::King},
-//    {'A', RankType::Ace}
+//const unordered_map<char, Rank> Card::rank_codes = {
+//    {'2', Rank::Two},
+//    {'3', Rank::Three},
+//    {'4', Rank::Four},
+//    {'5', Rank::Five},
+//    {'6', Rank::Six},
+//    {'7', Rank::Seven},
+//    {'8', Rank::Eight},
+//    {'9', Rank::Nine},
+//    {'T', Rank::Ten},
+//    {'J', Rank::Jack},
+//    {'Q', Rank::Queen},
+//    {'K', Rank::King},
+//    {'A', Rank::Ace}
 //};
 
-//const unordered_map<char, SuitType> Card::suit_codes = {
-//    {'C', SuitType::Clubs},
-//    {'D', SuitType::Diamonds},
-//    {'H', SuitType::Hearts},
-//    {'S', SuitType::Spades}
+//const unordered_map<char, Suit> Card::suit_codes = {
+//    {'C', Suit::Clubs},
+//    {'D', Suit::Diamonds},
+//    {'H', Suit::Hearts},
+//    {'S', Suit::Spades}
 //};
 
-class Suit : public Entity {
-public:
-    SuitType suit_type;
-    Suit(SuitType suit_type) : suit_type(suit_type) {}
-    virtual bool operator>(Entity* e) {
-        if (Suit* s = dynamic_cast<Suit*>(e)) {
-            return this->suit_type > s->suit_type;
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
-    virtual bool operator==(Entity* e) {
-        if (Suit* s = dynamic_cast<Suit*>(e)) {
-            return this->suit_type == s->suit_type;
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
-};
-
-class Rank : public Entity {
-public:
-    RankType rank_type;
-    Rank(RankType rank_type) : rank_type(rank_type) {}
-    virtual bool operator>(Entity* e) {
-        if (Rank* r = dynamic_cast<Rank*>(e)) {
-            return this->rank_type > r->rank_type;
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
-    virtual bool operator==(Entity* e) {
-        if (Rank* r = dynamic_cast<Rank*>(e)) {
-            return this->rank_type == r->rank_type;
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
-};
 
 class Hand {
 public:
@@ -262,13 +219,13 @@ public:
     void sort(string mode="descending") {
         if (mode == "descending") {
             std::sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) -> bool {
-                return c1 > &c2;
+                return c1 > c2;
                 });
         }
         else {
             // "ascending"
             std::sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) -> bool {
-                return c1 < &c2;
+                return c1 < c2;
                 });
         }
     }
@@ -290,6 +247,20 @@ public:
     // const SpecialHand hand_type;
     virtual SpecialHand handType() = 0;
     virtual vector<Rank> check(Hand& hand) = 0;
+
+    // Counts each rank in the hand
+    unordered_map<Rank, int> count_ranks(Hand& hand) {
+        unordered_map<Rank, int> rank_count;
+        for (Card& c : hand.cards) {
+            if (rank_count.find(c.rank) == rank_count.end()) {
+                rank_count.insert({ c.rank, 1 });
+            }
+            else {
+                rank_count[c.rank]++;
+            }
+        }
+        return rank_count;
+    }
 };
 
 class HighCardChecker : public SpecialHandChecker {
@@ -307,24 +278,26 @@ class PairChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::Pair; }
     virtual vector<Rank> check(Hand& hand) {
-        RankType pair_rank = RankType::_Rank_None;
+        Rank pair_rank;
         int pair_pos;
+        bool found_pair = false;
         for (int i = 0; i < 4; i++) {
             if (hand.cards[i].rank == hand.cards[i + 1].rank) {
                 pair_rank = hand.cards[i].rank;
                 pair_pos = i;
+                found_pair = true;
             }
         }
-        if (pair_rank == RankType::_Rank_None) {
+        if (!found_pair) {
             return vector<Rank>();
         }
         else {
             // Add the rank of the pair
-            vector<Rank> vr{ Rank(pair_rank) };
+            vector<Rank> vr{ pair_rank };
             // Add the rest of the ranks, from the highest
             for (int i = 0; i < 5; i++)
                 if (i != pair_pos && i != pair_pos + 1)
-                    vr.push_back(Rank(hand.cards[i].rank));
+                    vr.push_back(hand.cards[i].rank);
             return vr;
         }
     }
@@ -334,7 +307,24 @@ class TwoPairChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::TwoPair; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        vector<Rank> vr;
+        for (int i = 0; i < 4; i++) {
+            if (hand.cards[i].rank == hand.cards[i + 1].rank) {
+                vr.push_back(hand.cards[i].rank);
+            }
+        }
+        // If two distinct pairs where found
+        if (vr.size() == 2 && vr[0] != vr[1]) {
+            // triple_ranks contains sorted ranks of the two pairs,
+            // add the remaining (kicker) ranks
+            for (Card& c : hand.cards)
+                if (c.rank != vr[0] && c.rank != vr[1])
+                    vr.push_back(c.rank);
+            return vr;
+        }
+        else {
+            return vector<Rank>();
+        }
     }
 };
 
@@ -342,7 +332,27 @@ class ThreeOfKindChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::ThreeOfKind; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        vector<Rank> triple_ranks;
+        for (int i = 0; i < 3; i++) {
+            if (hand.cards[i].rank == hand.cards[i + 1].rank &&
+                hand.cards[i + 1].rank == hand.cards[i + 2].rank) {
+                triple_ranks.push_back(hand.cards[i].rank);
+            }
+        }
+        // If exactly one triple was found
+        if (triple_ranks.size() == 1) {
+            for (Card& c : hand.cards) {
+                if (c.rank != triple_ranks[0]) {
+                    triple_ranks.push_back(c.rank);
+                }
+            }
+            if (triple_ranks.size() == 3 && triple_ranks[1] != triple_ranks[2])
+                return triple_ranks;
+            else
+                return vector<Rank>();
+        }
+        else
+            return vector<Rank>();
     }
 };
 
@@ -350,7 +360,11 @@ class StraightChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::Straight; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        for (int i = 0; i < 4; i++)
+            if (hand.cards[i].rank != hand.cards[i + 1].rank + 1)
+                return vector<Rank>();
+        // return the highest rank
+        return { hand.cards[0].rank };
     }
 };
 
@@ -358,7 +372,13 @@ class FlushChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::Flush; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        for (int i = 0; i < 4; i++)
+            if (hand.cards[i].suit != hand.cards[i+1].suit)
+                return vector<Rank>();
+        vector<Rank> vr;
+        for (Card& c : hand.cards)
+            vr.push_back(c.rank);
+        return vr;
     }
 };
 
@@ -366,7 +386,23 @@ class FullHouseChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::FullHouse; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        unordered_map<Rank, int> rank_count = count_ranks(hand);
+        // If two distinct ranks were found
+        if (rank_count.size() == 2) {
+            Rank triple_rank, pair_rank;
+            for (auto rc : rank_count) {
+                if (rc.second == 2)
+                    pair_rank = rc.first;
+                else if (rc.second == 3)
+                    triple_rank = rc.first;
+                else
+                    // A rank has different count - not fullhouse
+                    return vector<Rank>();
+            }
+            return { triple_rank, pair_rank };
+        }
+        else
+            return vector<Rank>();
     }
 };
 
@@ -374,7 +410,23 @@ class FourOfKindChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::FourOfKind; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        unordered_map<Rank, int> rank_count = count_ranks(hand);
+        // If two distinct ranks were found
+        if (rank_count.size() == 2) {
+            Rank quadruple_rank, single_rank;
+            for (auto rc : rank_count) {
+                if (rc.second == 1)
+                    single_rank = rc.first;
+                else if (rc.second == 4)
+                    quadruple_rank = rc.first;
+                else
+                    // A rank has different count - not fullhouse
+                    return vector<Rank>();
+            }
+            return { quadruple_rank, single_rank };
+        }
+        else
+            return vector<Rank>();
     }
 };
 
@@ -382,7 +434,11 @@ class StraightFlushChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::StraightFlush; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        if (FlushChecker().check(hand) != vector<Rank>()) {
+            return StraightChecker().check(hand);
+        }
+        else
+            return vector<Rank>();
     }
 };
 
@@ -390,7 +446,12 @@ class RoyalFlushChecker : public SpecialHandChecker {
 public:
     virtual SpecialHand handType() { return SpecialHand::RoyalFlush; }
     virtual vector<Rank> check(Hand& hand) {
-        return vector<Rank>();
+        vector<Rank> straight_vr = StraightFlushChecker().check(hand);
+        if (straight_vr == vector<Rank>({ Ace })) {
+            return straight_vr;
+        }
+        else
+            return vector<Rank>();
     }
 };
 
@@ -414,7 +475,7 @@ inline pair<SpecialHand, vector<Rank>> highestSpecialHand(Hand& hand) {
     vector<Rank> highest_check_result;
     for (shared_ptr<SpecialHandChecker> handChecker : handCheckers) {
         vector<Rank> check_result = handChecker->check(hand);
-        if (!check_result.empty()) {
+        if (check_result != vector<Rank>()) {
             highest_check_result = check_result;
             highest_sh = handChecker->handType();
         }
@@ -428,12 +489,12 @@ inline bool operator>(vector<Rank>& vr1, vector<Rank>& vr2) {
         throw PokerEntityException(vector_rank_comparison_error_msg);
     }
     int i = 0;
-    while (i < vr1.size() && vr1[i] == &vr2[i])
+    while (i < vr1.size() && vr1[i] == vr2[i])
         i++;
     if (i == vr1.size())
         return false;
     else
-        return vr1[i] > &vr2[i];
+        return vr1[i] > vr2[i];
 }
 
 /* Compares two vectors of ranks (equality).*/
@@ -442,7 +503,7 @@ inline bool operator==(vector<Rank>& vr1, vector<Rank>& vr2) {
         throw PokerEntityException(vector_rank_comparison_error_msg);
     }
     for (int i = 0; i < vr1.size(); i++)
-        if (vr1[i] != &vr2[i])
+        if (vr1[i] != vr2[i])
             return false;
     return true;
 }
