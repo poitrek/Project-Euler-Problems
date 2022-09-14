@@ -130,7 +130,6 @@ public:
         else {
             throw PokerEntityException(entity_comparison_error_msg);
         }
-        // throw EntityTypeException("")
     }
     virtual bool operator==(Entity& e) {
         if (Card* c = dynamic_cast<Card*>(&e)) {
@@ -140,43 +139,10 @@ public:
             throw PokerEntityException(entity_comparison_error_msg);
         }
     }
-    // virtual bool operator>(Card &c)
-    // {
-    //     return this->rank > c.rank || (this->rank == c.rank && this->suit > c.suit);
-    // }
-    // virtual bool operator==(Card &c)
-    // {
-    //     return this->rank == c.rank && this->suit == c.suit;
-    // }
 };
-
-//const unordered_map<char, Rank> Card::rank_codes = {
-//    {'2', Rank::Two},
-//    {'3', Rank::Three},
-//    {'4', Rank::Four},
-//    {'5', Rank::Five},
-//    {'6', Rank::Six},
-//    {'7', Rank::Seven},
-//    {'8', Rank::Eight},
-//    {'9', Rank::Nine},
-//    {'T', Rank::Ten},
-//    {'J', Rank::Jack},
-//    {'Q', Rank::Queen},
-//    {'K', Rank::King},
-//    {'A', Rank::Ace}
-//};
-
-//const unordered_map<char, Suit> Card::suit_codes = {
-//    {'C', Suit::Clubs},
-//    {'D', Suit::Diamonds},
-//    {'H', Suit::Hearts},
-//    {'S', Suit::Spades}
-//};
-
 
 class Hand {
 public:
-    inline static const int I = 0;
     inline static const string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
     inline static const regex card_code_pattern = regex(Hand::card_code_pattern_string);
     inline static const regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
@@ -195,17 +161,13 @@ public:
     Hand(string code) {
         smatch hcp_match;
         if (regex_match(code, hcp_match, Hand::hand_code_pattern)) {
-            cout << "yes" << endl;
             smatch ccp_match;
             auto match_begin =
                 sregex_iterator(code.begin(), code.end(), Hand::card_code_pattern);
             auto match_end = sregex_iterator();
-            cout << "card codes:" << endl;
             for (sregex_iterator i = match_begin; i != match_end; ++i) {
-                cout << "->" << (*i).str();
                 cards.push_back(Card((*i).str()));
             }
-            cout << endl;
         }
         else {
             throw PokerEntityException("Invalid hand code");
@@ -231,11 +193,15 @@ public:
     }
     bool operator>(Hand& hand);
     bool operator==(Hand& hand);
-    //string to_string() {
+    bool operator>=(Hand& hand);
+    bool operator<(Hand& hand);
+    bool operator<=(Hand& hand);
+    bool operator!=(Hand& hand);
 
-    //}
 };
 
+
+// Produces LNK2005 error in the test module. inline + 2017 C++ standard worked.
 
 //const regex Hand::card_code_pattern = regex(Hand::card_code_pattern_string);
 //const regex Hand::hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
@@ -512,10 +478,10 @@ inline bool operator==(vector<Rank>& vr1, vector<Rank>& vr2) {
 inline bool Hand::operator>(Hand& hand) {
     auto p1 = highestSpecialHand(*this);
     auto p2 = highestSpecialHand(hand);
-    if (p1.first != p1.first)
+    if (p1.first != p2.first)
         return p1.first > p2.first;
     else {
-        return p2.second > p2.second;
+        return p1.second > p2.second;
     }
 }
 
@@ -525,4 +491,20 @@ inline bool Hand::operator==(Hand& hand)
     auto p1 = highestSpecialHand(*this);
     auto p2 = highestSpecialHand(hand);
     return p1.first == p2.first && p1.second == p2.second;
+}
+
+inline bool Hand::operator>=(Hand& hand) {
+    return *this == hand || *this > hand;
+}
+
+inline bool Hand::operator<(Hand& hand) {
+    return !(*this >= hand);
+}
+
+inline bool Hand::operator<=(Hand& hand) {
+    return !(*this > hand);
+}
+
+inline bool Hand::operator!=(Hand& hand) {
+    return !(*this == hand);
 }

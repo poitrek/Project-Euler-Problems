@@ -217,7 +217,57 @@ TEST(CheckerTest, RoyalFlushChecker1) {
 	EXPECT_EQ(RoyalFlushChecker().check(h4), vector<Rank>());
 }
 
-TEST(HighestSpecialHandTest, Test1) {
-	//Hand h01("")
+TEST(HandTest, HighestSpecialHand1) {
+	vector<Hand> hands = {
+		Hand("TS 8H QD AC 5C"),
+		Hand("3C 2D 8H 8C 4D"),
+		Hand("4S 8H 4C QD QC"),
+		Hand("2S QC QD TC QH"),
+		Hand("4D 5C 6C 7H 8H"),
+		Hand("2C QC KC 8C 4C"),
+		Hand("5C JS JD 5D 5H"),
+		Hand("TH TC TD 7D TS"),
+		Hand("4D 5D 6D 7D 8D"),
+		Hand("QS KS AS TS JS")
+	};
+	vector <pair<SpecialHand, vector<Rank>>> highest_special_hands = {
+		{ SpecialHand::HighCard, {Ace, Queen, Ten, Eight, Five}},
+		{ SpecialHand::Pair, {Eight, Four, Three, Two}},
+		{ SpecialHand::TwoPair, {Queen, Four, Eight}},
+		{ SpecialHand::ThreeOfKind, {Queen, Ten, Two}},
+		{ SpecialHand::Straight, {Eight}},
+		{ SpecialHand::Flush, {King, Queen, Eight, Four, Two}},
+		{ SpecialHand::FullHouse, {Five, Jack}},
+		{ SpecialHand::FourOfKind, {Ten, Seven}},
+		{ SpecialHand::StraightFlush, {Eight}},
+		{ SpecialHand::RoyalFlush, {Ace}}
+	};
+	for (int i = 0; i < hands.size(); i++) {
+		EXPECT_EQ(highestSpecialHand(hands[i]), highest_special_hands[i]);
+	}
 }
 
+TEST(HandTest, HandComparison1) {
+	// Pair vs HighCard
+	EXPECT_TRUE(Hand("4D 6C 9H 9C 3D") > Hand("AC QD 2D 4H 5H"));
+	// ThreeOfKind vs Pair
+	EXPECT_TRUE(Hand("2D 2C 7H 2D JD") > Hand("4D 6C 9H 9C 3D"));
+	// Flush vs ThreeOfKind
+	EXPECT_TRUE(Hand("3C JC KC 9C 7C") > Hand("2D 2C 7H 2D JD"));
+}
+
+TEST(HandTest, HandComparison2) {
+	// Pair
+	EXPECT_TRUE(Hand("AC QD 2D 4H 5H") > Hand("AC TD 2D 4H 5H"));
+	// TwoPair
+	EXPECT_TRUE(Hand("QC QD 6D 6H 5H") > Hand("QC QD 6D 6H 3H"));
+	// Identical
+	EXPECT_TRUE(Hand("AC QD 2D 4H 5H") == Hand("AC QD 2D 4H 5H"));
+}
+
+TEST(HandTest, HandComparison3) {
+	EXPECT_TRUE(Hand("7S 7D 9H 5C 2D") == Hand("7D 7H 9S 5D 2S"));
+	EXPECT_TRUE(Hand("7S 7D 9H 9C 9D") == Hand("7D 7H 9S 9D 9S"));
+	EXPECT_TRUE(Hand("JS KS 2S 9S 3S") == Hand("JC KC 2C 9C 3C"));
+	EXPECT_TRUE(Hand("4D 5S 6C 7D 8H") == Hand("4C 5D 6D 7C 8S"));
+}

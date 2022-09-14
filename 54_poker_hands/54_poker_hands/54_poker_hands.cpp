@@ -1,23 +1,25 @@
+// Problem no. 54: Poker hands
+// ###### SOLVED ######
+
 #include "54_poker_hands.hpp"
-
-//bool compareHands(Hand &hand1, Hand &hand2) {
-//    // prototype
-//}
-//const std::string Hand::card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
-
+#include <fstream>
 
 int main()
 {
-    vector<int> v = { 1, 2 };
-    cout << * max_element(v.begin(), v.end());
-
-    //auto words_begin = sregex_iterator(word.begin(), word.end(),
-    //    hand_code_pattern);
-    //auto words_end = sregex_iterator();
-    //cout << "Found " << distance(words_begin, words_end) << " 'words':" << endl;
-    //for (sregex_iterator i = words_begin; i != words_end; ++i) {
-    //    string match_str = (*i).str();
-    //    cout << match_str << endl;
-    //}
+    ifstream file;
+    file.open("p054_poker.txt", ios::in);
+    if (file.good()) {
+        string line, code1, code2;
+        int h1_wins = 0;
+        while (getline(file, line)) {
+            code1 = line.substr(0, 14);
+            code2 = line.substr(15, 14);
+            Hand h1(code1), h2(code2);
+            if (h1 > h2)
+                h1_wins++;
+        }
+        cout << "Player 1 wins: " << h1_wins << endl;
+        file.close();
+    }
     return 0;
 }
