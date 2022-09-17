@@ -132,7 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="54_poker_hands.cpp" />
-    <ClCompile Include="poker_model_2.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="model3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="54_poker_hands.hpp" />

@@ -9,18 +9,18 @@
 
 using namespace std;
 
-class PokerEntityException : public exception {
+class PokerException : public exception {
 public:
     string msg;
-    PokerEntityException(string msg) : msg(msg) {
+    PokerException(string msg) : msg(msg) {
     }
     virtual const char* what() const noexcept {
         return msg.c_str();
     }
 };
 
-const string entity_comparison_error_msg = "Invalid entity type for comparison";
-const string vector_rank_comparison_error_msg = "Incompatible rank vectors. Should be the same size";
+static const string entity_comparison_error_msg = "Invalid entity type for comparison";
+static const string vector_comparison_error_msg = "Incorrect vector sizes to compare. Should be the same length";
 
 enum SpecialHand
 {
@@ -64,30 +64,29 @@ enum Rank
     Ace
 };
 
-class Entity
+struct Comparable
 {
-public:
-    virtual bool operator>(Entity& e) = 0;
-    virtual bool operator==(Entity& e) = 0;
-    virtual bool operator>=(Entity& e)
+    virtual bool operator>(Comparable& cp) = 0;
+    virtual bool operator==(Comparable& cp) = 0;
+    bool operator>=(Comparable& cp)
     {
-        return (*this) > e || (*this) == e;
+        return (*this) > cp || (*this) == cp;
     }
-    virtual bool operator<(Entity& e)
+    bool operator<(Comparable& cp)
     {
-        return !(*this >= e);
+        return !(*this >= cp);
     }
-    virtual bool operator<=(Entity& e)
+    bool operator<=(Comparable& cp)
     {
-        return !(*this > e);
+        return !(*this > cp);
     }
-    virtual bool operator!=(Entity& e)
+    bool operator!=(Comparable& cp)
     {
-        return !(*this == e);
+        return !(*this == cp);
     }
 };
 
-class Card : public Entity
+class Card : public Comparable
 {
 public:
     inline static const unordered_map<char, Rank> rank_codes = {
@@ -123,30 +122,14 @@ public:
     }
     Card(Rank rank, Suit suit)
         : rank(rank), suit(suit) {}
-    virtual bool operator>(Entity& e) {
-        if (Card* c = dynamic_cast<Card*>(&e)) {
-            return this->rank > c->rank || (this->rank == c->rank && this->suit > c->suit);
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
-    virtual bool operator==(Entity& e) {
-        if (Card* c = dynamic_cast<Card*>(&e)) {
-            return this->rank == c->rank && this->suit == c->suit;
-        }
-        else {
-            throw PokerEntityException(entity_comparison_error_msg);
-        }
-    }
+    inline bool operator>(Comparable& cp);
+    inline bool operator==(Comparable& cp);
 };
 
-class Hand {
-public:
+struct Hand : public Comparable {
     inline static const string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
     inline static const regex card_code_pattern = regex(Hand::card_code_pattern_string);
     inline static const regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
-    //static 
     vector<Card> cards;
     Hand(Card c1, Card c2, Card c3, Card c4, Card c5) {
         cards = { c1, c2, c3, c4, c5 };
@@ -154,7 +137,7 @@ public:
     }
     Hand(vector<Card>& cards) : cards(cards) {
         if (cards.size() != 5)
-            throw PokerEntityException("Incorrect number of cards in a hand");
+            throw PokerException("Incorrect number of cards in a hand");
         sort("descending");
     }
 
@@ -170,7 +153,7 @@ public:
             }
         }
         else {
-            throw PokerEntityException("Invalid hand code");
+            throw PokerException("Invalid hand code");
         }
         sort("descending");
     }
@@ -191,15 +174,18 @@ public:
                 });
         }
     }
-    bool operator>(Hand& hand);
-    bool operator==(Hand& hand);
-    bool operator>=(Hand& hand);
-    bool operator<(Hand& hand);
-    bool operator<=(Hand& hand);
-    bool operator!=(Hand& hand);
+
+    /* Finds the highest SpecialHand for a hand. Returns pair<special_hand_type, vector_of_ranks> where
+    vector_of_ranks will be used for a comparison with a hand of the same special type.*/
+    inline pair<SpecialHand, vector<Rank>> highestSpecialHand();
+
+    /* Compares two hands according to Poker rules */
+    inline bool operator>(Comparable& cp);
+ 
+    /* Compares two hands according to Poker rules (equality) */
+    inline bool operator==(Comparable& cp);
 
 };
-
 
 // Produces LNK2005 error in the test module. inline + 2017 C++ standard worked.
 
@@ -421,7 +407,7 @@ public:
     }
 };
 
-inline vector<shared_ptr<SpecialHandChecker>> handCheckers = {
+static vector<shared_ptr<SpecialHandChecker>> handCheckers = {
     shared_ptr<HighCardChecker>(new HighCardChecker),
     shared_ptr<PairChecker>(new PairChecker),
     shared_ptr<TwoPairChecker>(new TwoPairChecker),
@@ -434,13 +420,30 @@ inline vector<shared_ptr<SpecialHandChecker>> handCheckers = {
     shared_ptr<RoyalFlushChecker>(new RoyalFlushChecker),
 };
 
-/* Finds the highest SpecialHand for a hand. Returns pair<special_hand_type, vector_of_ranks> where
-vector_of_ranks will be used for a comparison with a hand of the same special type.*/
-inline pair<SpecialHand, vector<Rank>> highestSpecialHand(Hand& hand) {
+
+bool Card::operator>(Comparable& cp) {
+    if (Card* c = dynamic_cast<Card*>(&cp)) {
+        return this->rank > c->rank || (this->rank == c->rank && this->suit > c->suit);
+    }
+    else {
+        throw PokerException(entity_comparison_error_msg);
+    }
+}
+
+bool Card::operator==(Comparable& cp) {
+    if (Card* c = dynamic_cast<Card*>(&cp)) {
+        return this->rank == c->rank && this->suit == c->suit;
+    }
+    else {
+        throw PokerException(entity_comparison_error_msg);
+    }
+}
+
+inline pair<SpecialHand, vector<Rank>> Hand::highestSpecialHand() {
     SpecialHand highest_sh;
     vector<Rank> highest_check_result;
     for (shared_ptr<SpecialHandChecker> handChecker : handCheckers) {
-        vector<Rank> check_result = handChecker->check(hand);
+        vector<Rank> check_result = handChecker->check(*this);
         if (check_result != vector<Rank>()) {
             highest_check_result = check_result;
             highest_sh = handChecker->handType();
@@ -449,24 +452,54 @@ inline pair<SpecialHand, vector<Rank>> highestSpecialHand(Hand& hand) {
     return pair<SpecialHand, vector<Rank>>(highest_sh, highest_check_result);
 }
 
-/* Compares two vectors of ranks. Used when two hands are of the same special type.*/
-inline bool operator>(vector<Rank>& vr1, vector<Rank>& vr2) {
-    if (vr1.size() != vr2.size()) {
-        throw PokerEntityException(vector_rank_comparison_error_msg);
+bool Hand::operator>(Comparable& cp) {
+    if (Hand* hand = dynamic_cast<Hand*>(&cp)) {
+        auto p1 = this->highestSpecialHand();
+        auto p2 = hand->highestSpecialHand();
+        if (p1.first != p2.first)
+            return p1.first > p2.first;
+        else {
+            return p1.second > p2.second;
+        }
     }
-    int i = 0;
-    while (i < vr1.size() && vr1[i] == vr2[i])
-        i++;
-    if (i == vr1.size())
-        return false;
-    else
-        return vr1[i] > vr2[i];
+    else {
+        throw PokerException(entity_comparison_error_msg);
+    }
 }
 
-/* Compares two vectors of ranks (equality).*/
-inline bool operator==(vector<Rank>& vr1, vector<Rank>& vr2) {
+bool Hand::operator==(Comparable& cp) {
+    if (Hand* hand = dynamic_cast<Hand*>(&cp)) {
+        auto p1 = this->highestSpecialHand();
+        auto p2 = hand->highestSpecialHand();
+        return p1.first == p2.first && p1.second == p2.second;
+    }
+    else {
+        throw PokerException(entity_comparison_error_msg);
+    }
+}
+
+/* Compares two vectors of the same size, of comparable type. Compares items 
+subsequently from the first to the last.
+Used when two hands are of the same special type.*/
+template<typename T>
+inline bool operator>(vector<T>& vec1, vector<T>& vec2) {
+    if (vec1.size() != vec2.size()) {
+        throw PokerException(vector_comparison_error_msg);
+    }
+    int i = 0;
+    while (i < vec1.size() && vec1[i] == vec2[i])
+        i++;
+    if (i == vec1.size())
+        return false;
+    else
+        return vec1[i] > vec2[i];
+}
+
+/* Compares two vectors of comparable type (equality).*/
+template<typename T>
+inline bool operator==(vector<T>& vr1, vector<T>& vr2) {
     if (vr1.size() != vr2.size()) {
-        throw PokerEntityException(vector_rank_comparison_error_msg);
+        throw PokerException(vector_comparison_error_msg);
     }
     for (int i = 0; i < vr1.size(); i++)
         if (vr1[i] != vr2[i])
@@ -474,37 +507,23 @@ inline bool operator==(vector<Rank>& vr1, vector<Rank>& vr2) {
     return true;
 }
 
-/* Compares two hands according to Poker rules */
-inline bool Hand::operator>(Hand& hand) {
-    auto p1 = highestSpecialHand(*this);
-    auto p2 = highestSpecialHand(hand);
-    if (p1.first != p2.first)
-        return p1.first > p2.first;
-    else {
-        return p1.second > p2.second;
-    }
+template<typename T>
+inline bool operator>=(vector<T>& vec1, vector<T>& vec2) {
+    return vec1 > vec2 || vec1 == vec2;
 }
 
-/* Compares two hands according to Poker rules (equality) */
-inline bool Hand::operator==(Hand& hand)
-{
-    auto p1 = highestSpecialHand(*this);
-    auto p2 = highestSpecialHand(hand);
-    return p1.first == p2.first && p1.second == p2.second;
+template<typename T>
+inline bool operator<(vector<T>& vec1, vector<T>& vec2) {
+    return !(vec1 >= vec2);
 }
 
-inline bool Hand::operator>=(Hand& hand) {
-    return *this == hand || *this > hand;
+template<typename T>
+inline bool operator<=(vector<T>& vec1, vector<T>& vec2) {
+    return (vec1 > vec2);
 }
 
-inline bool Hand::operator<(Hand& hand) {
-    return !(*this >= hand);
+template<typename T>
+inline bool operator!=(vector<T>& vec1, vector<T>& vec2) {
+    return !(vec1 == vec2);
 }
 
-inline bool Hand::operator<=(Hand& hand) {
-    return !(*this > hand);
-}
-
-inline bool Hand::operator!=(Hand& hand) {
-    return !(*this == hand);
-}

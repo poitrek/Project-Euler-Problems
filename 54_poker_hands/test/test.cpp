@@ -61,8 +61,8 @@ TEST(RankVectorTest, RankVectorComparison2) {
 		Rank::Four, Rank::Eight,
 		Rank::Queen
 	};
-	EXPECT_THROW(vr1 == vr2, PokerEntityException);
-	EXPECT_THROW(vr1 > vr2, PokerEntityException);
+	EXPECT_THROW(vr1 == vr2, PokerException);
+	EXPECT_THROW(vr1 > vr2, PokerException);
 }
 
 TEST(HandTest, HandSort1) {
@@ -243,7 +243,7 @@ TEST(HandTest, HighestSpecialHand1) {
 		{ SpecialHand::RoyalFlush, {Ace}}
 	};
 	for (int i = 0; i < hands.size(); i++) {
-		EXPECT_EQ(highestSpecialHand(hands[i]), highest_special_hands[i]);
+		EXPECT_EQ(hands[i].highestSpecialHand(), highest_special_hands[i]);
 	}
 }
 
