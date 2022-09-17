@@ -75,9 +75,6 @@ TEST(HandTest, HandSort1) {
 	//EXPECT_EQ(h.cards.back(), Card(Rank::Three, Suit::Hearts));
 }
 
-//string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
-//regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
-
 TEST(HandTest, HandCodeRegex1) {
 	EXPECT_TRUE(regex_match("5H KS 9C 7D 9H", Hand::hand_code_pattern));
 	EXPECT_TRUE(regex_match(" 9S 9D 9C AC 3D ", Hand::hand_code_pattern));
@@ -105,44 +102,44 @@ TEST(HandTest, HandInitFromCode1) {
 			Card(Two, Hearts)));
 }
 
-TEST(CheckerTest, HighCardChecker1) {
+TEST(HandCheckerTest, HighCardChecker1) {
 	Hand h("9C 5D KS 2H JC");
 	EXPECT_TRUE(HighCardChecker().check(h) ==
 		vector<Rank>({ King, Jack, Nine, Five, Two }));
 }
 
-TEST(CheckerTest, PairChecker1) {
+TEST(HandCheckerTest, PairChecker1) {
 	Hand h("6D 2H JC 6H 4C");
 	EXPECT_EQ(PairChecker().check(h),
 		vector<Rank>({ Six, Jack, Four, Two }));
 }
 
-TEST(CheckerTest, PairChecker2) {
+TEST(HandCheckerTest, PairChecker2) {
 	Hand h("QD 2H JC 6H 4C");
 	EXPECT_EQ(PairChecker().check(h),
 		vector<Rank>());
 }
 
-TEST(CheckerTest, TwoPairChecker1) {
+TEST(HandCheckerTest, TwoPairChecker1) {
 	Hand h("KC 3S TH KS 3D");
 	EXPECT_EQ(TwoPairChecker().check(h),
 		vector<Rank>({ King, Three, Ten }));
 }
 
-TEST(CheckerTest, TwoPairChecker2) {
+TEST(HandCheckerTest, TwoPairChecker2) {
 	Hand h1("KC 3S TH QS 3D");
 	Hand h2("KC KD KS TH 3D");
 	EXPECT_EQ(TwoPairChecker().check(h1), vector<Rank>());
 	EXPECT_EQ(TwoPairChecker().check(h2), vector<Rank>());
 }
 
-TEST(CheckerTest, ThreeofKindChecker1) {
+TEST(HandCheckerTest, ThreeofKindChecker1) {
 	Hand h("2S QC QD TC QH");
 	EXPECT_EQ(ThreeOfKindChecker().check(h),
 		vector<Rank>({ Queen, Ten, Two }));
 }
 
-TEST(CheckerTest, ThreeofKindChecker2) {
+TEST(HandCheckerTest, ThreeofKindChecker2) {
 	Hand h1("AS 6C QD 2C TH");
 	Hand h2("2S QC QD 2C QH");
 	Hand h3("2S 3C QD 2C QH");
@@ -153,7 +150,7 @@ TEST(CheckerTest, ThreeofKindChecker2) {
 	EXPECT_EQ(ThreeOfKindChecker().check(h4), vector<Rank>());
 }
 
-TEST(CheckerTest, StraightChecker1) {
+TEST(HandCheckerTest, StraightChecker1) {
 	Hand h1("7D 8C 9C TS JD");
 	Hand h2("7D 8C 9C TS QD");
 	EXPECT_EQ(StraightChecker().check(h1),
@@ -161,7 +158,7 @@ TEST(CheckerTest, StraightChecker1) {
 	EXPECT_EQ(StraightChecker().check(h2), vector<Rank>());
 }
 
-TEST(CheckerTest, FlushChecker1) {
+TEST(HandCheckerTest, FlushChecker1) {
 	Hand h1("7D 9D 3D AD 4D");
 	Hand h2("7C 9D 3D AD 4D");
 	EXPECT_EQ(FlushChecker().check(h1),
@@ -169,7 +166,7 @@ TEST(CheckerTest, FlushChecker1) {
 	EXPECT_EQ(FlushChecker().check(h2), vector<Rank>());
 }
 
-TEST(CheckerTest, FullHouseChecker1) {
+TEST(HandCheckerTest, FullHouseChecker1) {
 	Hand h1("6C 6D 6S JS JC");
 	Hand h2("6C 6D 6S 6H JS");
 	Hand h3("6C 6D JS JC AD");
@@ -181,7 +178,7 @@ TEST(CheckerTest, FullHouseChecker1) {
 	EXPECT_EQ(FullHouseChecker().check(h4), vector<Rank>());
 }
 
-TEST(CheckerTest, FourOfKindChecker1) {
+TEST(HandCheckerTest, FourOfKindChecker1) {
 	Hand h1("6C 6D 6S 6H JS");
 	Hand h2("6C 6D 6S JS JC");
 	Hand h3("6C 6D 6S 9D 8H");
@@ -192,7 +189,7 @@ TEST(CheckerTest, FourOfKindChecker1) {
 }
 
 
-TEST(CheckerTest, StraightFlushChecker1) {
+TEST(HandCheckerTest, StraightFlushChecker1) {
 	Hand h1("7C 8C 9C TC JC");
 	Hand h2("7C 8C 9D TC JC");
 	Hand h3("7C 8C TC JC QC");
@@ -205,7 +202,7 @@ TEST(CheckerTest, StraightFlushChecker1) {
 }
 
 
-TEST(CheckerTest, RoyalFlushChecker1) {
+TEST(HandCheckerTest, RoyalFlushChecker1) {
 	Hand h1("TC JC QC KC AC");
 	Hand h2("7C 8C 9C TC JC");
 	Hand h3("TC JD QC KC AC");
@@ -270,4 +267,13 @@ TEST(HandTest, HandComparison3) {
 	EXPECT_TRUE(Hand("7S 7D 9H 9C 9D") == Hand("7D 7H 9S 9D 9S"));
 	EXPECT_TRUE(Hand("JS KS 2S 9S 3S") == Hand("JC KC 2C 9C 3C"));
 	EXPECT_TRUE(Hand("4D 5S 6C 7D 8H") == Hand("4C 5D 6D 7C 8S"));
+}
+
+TEST(ComparableTest, CardHandComparison) {
+	Card c(Rank::Five, Suit::Clubs);
+	Hand h("JS 9C 7S KH 4C");
+	EXPECT_THROW(c > h, PokerException);
+	EXPECT_THROW(c <= h, PokerException);
+	EXPECT_THROW(h == c, PokerException);
+	EXPECT_THROW(h != c, PokerException);
 }
