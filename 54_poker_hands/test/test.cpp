@@ -1,6 +1,4 @@
 #include "pch.h"
-//#include "54_poker_hands.hpp"
-//extern const std::regex Hand::Hand::hand_code_pattern;
 
 TEST(TestCaseName, TestName) {
   EXPECT_EQ(1, 1);
@@ -269,11 +267,13 @@ TEST(HandTest, HandComparison3) {
 	EXPECT_TRUE(Hand("4D 5S 6C 7D 8H") == Hand("4C 5D 6D 7C 8S"));
 }
 
-TEST(ComparableTest, CardHandComparison) {
-	Card c(Rank::Five, Suit::Clubs);
-	Hand h("JS 9C 7S KH 4C");
-	EXPECT_THROW(c > h, PokerException);
-	EXPECT_THROW(c <= h, PokerException);
-	EXPECT_THROW(h == c, PokerException);
-	EXPECT_THROW(h != c, PokerException);
-}
+// With current model this should not compile
+
+//TEST(ComparableTest, CardHandComparison) {
+//	Card c(Rank::Five, Suit::Clubs);
+//	Hand h("JS 9C 7S KH 4C");
+//	EXPECT_THROW(c > h, PokerException);
+//	EXPECT_THROW(c <= h, PokerException);
+//	EXPECT_THROW(h == c, PokerException);
+//	EXPECT_THROW(h != c, PokerException);
+//}

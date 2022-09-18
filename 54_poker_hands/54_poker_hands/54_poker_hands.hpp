@@ -64,29 +64,30 @@ enum Rank
     Ace
 };
 
+template<typename T>
 struct Comparable
 {
-    virtual bool operator>(Comparable& cp) = 0;
-    virtual bool operator==(Comparable& cp) = 0;
-    bool operator>=(Comparable& cp)
+    virtual bool operator>(T& cp) = 0;
+    virtual bool operator==(T& cp) = 0;
+    bool operator>=(T& cp)
     {
         return (*this) > cp || (*this) == cp;
     }
-    bool operator<(Comparable& cp)
+    bool operator<(T& cp)
     {
         return !(*this >= cp);
     }
-    bool operator<=(Comparable& cp)
+    bool operator<=(T& cp)
     {
         return !(*this > cp);
     }
-    bool operator!=(Comparable& cp)
+    bool operator!=(T& cp)
     {
         return !(*this == cp);
     }
 };
 
-class Card : public Comparable
+class Card : public Comparable<Card>
 {
 public:
     inline static const unordered_map<char, Rank> rank_codes = {
@@ -122,11 +123,11 @@ public:
     }
     Card(Rank rank, Suit suit)
         : rank(rank), suit(suit) {}
-    inline bool operator>(Comparable& cp);
-    inline bool operator==(Comparable& cp);
+    inline bool operator>(Card& card);
+    inline bool operator==(Card& card);
 };
 
-struct Hand : public Comparable {
+struct Hand : public Comparable<Hand> {
     inline static const string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
     inline static const regex card_code_pattern = regex(Hand::card_code_pattern_string);
     inline static const regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
@@ -180,10 +181,10 @@ struct Hand : public Comparable {
     inline pair<SpecialHand, vector<Rank>> highestSpecialHand();
 
     /* Compares two hands according to Poker rules */
-    inline bool operator>(Comparable& cp);
+    inline bool operator>(Hand& hand);
  
     /* Compares two hands according to Poker rules (equality) */
-    inline bool operator==(Comparable& cp);
+    inline bool operator==(Hand& hand);
 
 };
 
@@ -421,22 +422,12 @@ static vector<shared_ptr<SpecialHandChecker>> handCheckers = {
 };
 
 
-bool Card::operator>(Comparable& cp) {
-    if (Card* c = dynamic_cast<Card*>(&cp)) {
-        return this->rank > c->rank || (this->rank == c->rank && this->suit > c->suit);
-    }
-    else {
-        throw PokerException(entity_comparison_error_msg);
-    }
+bool Card::operator>(Card& card) {
+    return this->rank > card.rank || (this->rank == card.rank && this->suit > card.suit);
 }
 
-bool Card::operator==(Comparable& cp) {
-    if (Card* c = dynamic_cast<Card*>(&cp)) {
-        return this->rank == c->rank && this->suit == c->suit;
-    }
-    else {
-        throw PokerException(entity_comparison_error_msg);
-    }
+bool Card::operator==(Card& card) {
+    return this->rank == card.rank && this->suit == card.suit;
 }
 
 inline pair<SpecialHand, vector<Rank>> Hand::highestSpecialHand() {
@@ -452,30 +443,20 @@ inline pair<SpecialHand, vector<Rank>> Hand::highestSpecialHand() {
     return pair<SpecialHand, vector<Rank>>(highest_sh, highest_check_result);
 }
 
-bool Hand::operator>(Comparable& cp) {
-    if (Hand* hand = dynamic_cast<Hand*>(&cp)) {
-        auto p1 = this->highestSpecialHand();
-        auto p2 = hand->highestSpecialHand();
-        if (p1.first != p2.first)
-            return p1.first > p2.first;
-        else {
-            return p1.second > p2.second;
-        }
-    }
+bool Hand::operator>(Hand& hand) {
+    auto p1 = this->highestSpecialHand();
+    auto p2 = hand.highestSpecialHand();
+    if (p1.first != p2.first)
+        return p1.first > p2.first;
     else {
-        throw PokerException(entity_comparison_error_msg);
+        return p1.second > p2.second;
     }
 }
 
-bool Hand::operator==(Comparable& cp) {
-    if (Hand* hand = dynamic_cast<Hand*>(&cp)) {
-        auto p1 = this->highestSpecialHand();
-        auto p2 = hand->highestSpecialHand();
-        return p1.first == p2.first && p1.second == p2.second;
-    }
-    else {
-        throw PokerException(entity_comparison_error_msg);
-    }
+bool Hand::operator==(Hand& hand) {
+    auto p1 = this->highestSpecialHand();
+    auto p2 = hand.highestSpecialHand();
+    return p1.first == p2.first && p1.second == p2.second;
 }
 
 /* Compares two vectors of the same size, of comparable type. Compares items 
