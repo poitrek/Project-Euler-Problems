@@ -6,8 +6,8 @@ TEST(TestCaseName, TestName) {
 }
 
 TEST(CardTest, CardComparison1) {
-	Card c1(Rank::Five, Suit::Diamonds);
-	Card c2(Rank::Four, Suit::Clubs);
+	Card c1(Rank::five, Suit::diamonds);
+	Card c2(Rank::four, Suit::clubs);
 	EXPECT_TRUE(c1 > c2);
 	EXPECT_TRUE(c1 >= c2);
 	EXPECT_FALSE(c1 < c2);
@@ -15,7 +15,7 @@ TEST(CardTest, CardComparison1) {
 }
 
 TEST(CardTest, CardComparisonEqual) {
-	Card c1(Rank::Five, Suit::Diamonds);
+	Card c1(Rank::five, Suit::diamonds);
 	Card c2(c1);
 	EXPECT_TRUE(c1 == c2);
 	EXPECT_TRUE(c1 >= c2);
@@ -26,8 +26,8 @@ TEST(CardTest, CardComparisonEqual) {
 }
 
 TEST(CardTest, CardComparisonEqualRanks) {
-	Card c1(Rank::Jack, Suit::Hearts);
-	Card c2(Rank::Jack, Suit::Clubs);
+	Card c1(Rank::jack, Suit::hearts);
+	Card c2(Rank::jack, Suit::clubs);
 	EXPECT_TRUE(c1 > c2);
 	EXPECT_TRUE(c1 >= c2);
 	EXPECT_FALSE(c1 < c2);
@@ -36,12 +36,12 @@ TEST(CardTest, CardComparisonEqualRanks) {
 
 TEST(RankVectorTest, RankVectorComparison1) {
 	vector<Rank> vr1 = {
-		Rank::Four, Rank::Eight,
-		Rank::Queen, Rank::Nine
+		Rank::four, Rank::eight,
+		Rank::queen, Rank::nine
 	};
 	vector<Rank> vr2 = {
-		Rank::Four, Rank::Eight,
-		Rank::Queen, Rank::Seven
+		Rank::four, Rank::eight,
+		Rank::queen, Rank::seven
 	};
 	EXPECT_TRUE(vr1 > vr2);
 	EXPECT_FALSE(vr1 == vr2);
@@ -52,25 +52,25 @@ TEST(RankVectorTest, RankVectorComparison1) {
 
 TEST(RankVectorTest, RankVectorComparison2) {
 	vector<Rank> vr1{
-		Rank::Four, Rank::Eight,
-		Rank::Queen, Rank::Nine
+		Rank::four, Rank::eight,
+		Rank::queen, Rank::nine
 	};
 	vector<Rank> vr2{
-		Rank::Four, Rank::Eight,
-		Rank::Queen
+		Rank::four, Rank::eight,
+		Rank::queen
 	};
 	EXPECT_THROW(vr1 == vr2, PokerException);
 	EXPECT_THROW(vr1 > vr2, PokerException);
 }
 
 TEST(HandTest, HandSort1) {
-	Hand h(Card(Rank::Jack, Suit::Clubs), Card(Rank::Six, Suit::Hearts),
-		Card(Rank::Three, Suit::Hearts), Card(Rank::King, Suit::Diamonds),
-		Card(Rank::Ten, Suit::Spades));
-	EXPECT_TRUE(h.cards.front() == Card(Rank::King, Suit::Diamonds));
-	EXPECT_TRUE(h.cards.back() == Card(Rank::Three, Suit::Hearts));
+	Hand h(Card(Rank::jack, Suit::clubs), Card(Rank::six, Suit::hearts),
+		Card(Rank::three, Suit::hearts), Card(Rank::king, Suit::diamonds),
+		Card(Rank::ten, Suit::spades));
+	EXPECT_TRUE(h.cards.front() == Card(Rank::king, Suit::diamonds));
+	EXPECT_TRUE(h.cards.back() == Card(Rank::three, Suit::hearts));
 	// Compilation error: "const left-hand operand"
-	//EXPECT_EQ(h.cards.back(), Card(Rank::Three, Suit::Hearts));
+	//EXPECT_EQ(h.cards.back(), Card(Rank::three, Suit::hearts));
 }
 
 TEST(HandTest, HandCodeRegex1) {
@@ -95,21 +95,21 @@ TEST(HandTest, HandCodeRegex2) {
 
 TEST(HandTest, HandInitFromCode1) {
 	EXPECT_TRUE(Hand("KS JC 9C 5D 2H") ==
-		Hand(Card(King, Spades), Card(Jack, Clubs),
-			Card(Nine, Clubs), Card(Five, Diamonds),
-			Card(Two, Hearts)));
+		Hand(Card(king, spades), Card(jack, clubs),
+			Card(nine, clubs), Card(five, diamonds),
+			Card(two, hearts)));
 }
 
 TEST(HandCheckerTest, HighCardChecker1) {
 	Hand h("9C 5D KS 2H JC");
 	EXPECT_TRUE(HighCardChecker().check(h) ==
-		vector<Rank>({ King, Jack, Nine, Five, Two }));
+		vector<Rank>({ king, jack, nine, five, two }));
 }
 
 TEST(HandCheckerTest, PairChecker1) {
 	Hand h("6D 2H JC 6H 4C");
 	EXPECT_EQ(PairChecker().check(h),
-		vector<Rank>({ Six, Jack, Four, Two }));
+		vector<Rank>({ six, jack, four, two }));
 }
 
 TEST(HandCheckerTest, PairChecker2) {
@@ -121,7 +121,7 @@ TEST(HandCheckerTest, PairChecker2) {
 TEST(HandCheckerTest, TwoPairChecker1) {
 	Hand h("KC 3S TH KS 3D");
 	EXPECT_EQ(TwoPairChecker().check(h),
-		vector<Rank>({ King, Three, Ten }));
+		vector<Rank>({ king, three, ten }));
 }
 
 TEST(HandCheckerTest, TwoPairChecker2) {
@@ -134,7 +134,7 @@ TEST(HandCheckerTest, TwoPairChecker2) {
 TEST(HandCheckerTest, ThreeofKindChecker1) {
 	Hand h("2S QC QD TC QH");
 	EXPECT_EQ(ThreeOfKindChecker().check(h),
-		vector<Rank>({ Queen, Ten, Two }));
+		vector<Rank>({ queen, ten, two }));
 }
 
 TEST(HandCheckerTest, ThreeofKindChecker2) {
@@ -152,7 +152,7 @@ TEST(HandCheckerTest, StraightChecker1) {
 	Hand h1("7D 8C 9C TS JD");
 	Hand h2("7D 8C 9C TS QD");
 	EXPECT_EQ(StraightChecker().check(h1),
-		vector<Rank> { Jack });
+		vector<Rank> { jack });
 	EXPECT_EQ(StraightChecker().check(h2), vector<Rank>());
 }
 
@@ -160,7 +160,7 @@ TEST(HandCheckerTest, FlushChecker1) {
 	Hand h1("7D 9D 3D AD 4D");
 	Hand h2("7C 9D 3D AD 4D");
 	EXPECT_EQ(FlushChecker().check(h1),
-		vector<Rank> ({ Ace, Nine, Seven, Four, Three }));
+		vector<Rank> ({ ace, nine, seven, four, three }));
 	EXPECT_EQ(FlushChecker().check(h2), vector<Rank>());
 }
 
@@ -170,7 +170,7 @@ TEST(HandCheckerTest, FullHouseChecker1) {
 	Hand h3("6C 6D JS JC AD");
 	Hand h4("6C 6D 6S 9D 8H");
 	EXPECT_EQ(FullHouseChecker().check(h1),
-		vector<Rank>({ Six, Jack }));
+		vector<Rank>({ six, jack }));
 	EXPECT_EQ(FullHouseChecker().check(h2), vector<Rank>());
 	EXPECT_EQ(FullHouseChecker().check(h3), vector<Rank>());
 	EXPECT_EQ(FullHouseChecker().check(h4), vector<Rank>());
@@ -181,7 +181,7 @@ TEST(HandCheckerTest, FourOfKindChecker1) {
 	Hand h2("6C 6D 6S JS JC");
 	Hand h3("6C 6D 6S 9D 8H");
 	EXPECT_EQ(FourOfKindChecker().check(h1),
-		vector<Rank>({ Six, Jack }));
+		vector<Rank>({ six, jack }));
 	EXPECT_EQ(FourOfKindChecker().check(h2), vector<Rank>());
 	EXPECT_EQ(FourOfKindChecker().check(h3), vector<Rank>());
 }
@@ -193,7 +193,7 @@ TEST(HandCheckerTest, StraightFlushChecker1) {
 	Hand h3("7C 8C TC JC QC");
 	Hand h4("6C 5D 6S 9D 8H");
 	EXPECT_EQ(StraightFlushChecker().check(h1),
-		vector<Rank>({ Jack }));
+		vector<Rank>({ jack }));
 	EXPECT_EQ(StraightFlushChecker().check(h2), vector<Rank>());
 	EXPECT_EQ(StraightFlushChecker().check(h3), vector<Rank>());
 	EXPECT_EQ(StraightFlushChecker().check(h4), vector<Rank>());
@@ -206,7 +206,7 @@ TEST(HandCheckerTest, RoyalFlushChecker1) {
 	Hand h3("TC JD QC KC AC");
 	Hand h4("6C 5D 6S 9D 8H");
 	EXPECT_EQ(RoyalFlushChecker().check(h1),
-		vector<Rank>({ Ace }));
+		vector<Rank>({ ace }));
 	EXPECT_EQ(RoyalFlushChecker().check(h2), vector<Rank>());
 	EXPECT_EQ(RoyalFlushChecker().check(h3), vector<Rank>());
 	EXPECT_EQ(RoyalFlushChecker().check(h4), vector<Rank>());
@@ -226,16 +226,16 @@ TEST(HandTest, HighestSpecialHand1) {
 		Hand("QS KS AS TS JS")
 	};
 	vector <pair<SpecialHand, vector<Rank>>> highest_special_hands = {
-		{ SpecialHand::HighCard, {Ace, Queen, Ten, Eight, Five}},
-		{ SpecialHand::Pair, {Eight, Four, Three, Two}},
-		{ SpecialHand::TwoPair, {Queen, Four, Eight}},
-		{ SpecialHand::ThreeOfKind, {Queen, Ten, Two}},
-		{ SpecialHand::Straight, {Eight}},
-		{ SpecialHand::Flush, {King, Queen, Eight, Four, Two}},
-		{ SpecialHand::FullHouse, {Five, Jack}},
-		{ SpecialHand::FourOfKind, {Ten, Seven}},
-		{ SpecialHand::StraightFlush, {Eight}},
-		{ SpecialHand::RoyalFlush, {Ace}}
+		{ SpecialHand::highCard, {ace, queen, ten, eight, five}},
+		{ SpecialHand::onePair, {eight, four, three, two}},
+		{ SpecialHand::twoPair, {queen, four, eight}},
+		{ SpecialHand::threeOfKind, {queen, ten, two}},
+		{ SpecialHand::straight, {eight}},
+		{ SpecialHand::flush, {king, queen, eight, four, two}},
+		{ SpecialHand::fullHouse, {five, jack}},
+		{ SpecialHand::fourOfKind, {ten, seven}},
+		{ SpecialHand::straightFlush, {eight}},
+		{ SpecialHand::royalFlush, {ace}}
 	};
 	for (int i = 0; i < hands.size(); i++) {
 		EXPECT_EQ(hands[i].highestSpecialHand(), highest_special_hands[i]);
@@ -243,18 +243,18 @@ TEST(HandTest, HighestSpecialHand1) {
 }
 
 TEST(HandTest, HandComparison1) {
-	// Pair vs HighCard
+	// onePair vs highCard
 	EXPECT_TRUE(Hand("4D 6C 9H 9C 3D") > Hand("AC QD 2D 4H 5H"));
-	// ThreeOfKind vs Pair
+	// threeOfKind vs onePair
 	EXPECT_TRUE(Hand("2D 2C 7H 2D JD") > Hand("4D 6C 9H 9C 3D"));
-	// Flush vs ThreeOfKind
+	// flush vs threeOfKind
 	EXPECT_TRUE(Hand("3C JC KC 9C 7C") > Hand("2D 2C 7H 2D JD"));
 }
 
 TEST(HandTest, HandComparison2) {
-	// Pair
+	// onePair
 	EXPECT_TRUE(Hand("AC QD 2D 4H 5H") > Hand("AC TD 2D 4H 5H"));
-	// TwoPair
+	// twoPair
 	EXPECT_TRUE(Hand("QC QD 6D 6H 5H") > Hand("QC QD 6D 6H 3H"));
 	// Identical
 	EXPECT_TRUE(Hand("AC QD 2D 4H 5H") == Hand("AC QD 2D 4H 5H"));
@@ -270,7 +270,7 @@ TEST(HandTest, HandComparison3) {
 // With current model this should not compile
 
 //TEST(ComparableTest, CardHandComparison) {
-//	Card c(Rank::Five, Suit::Clubs);
+//	Card c(Rank::five, Suit::clubs);
 //	Hand h("JS 9C 7S KH 4C");
 //	EXPECT_THROW(c > h, PokerException);
 //	EXPECT_THROW(c <= h, PokerException);

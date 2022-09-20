@@ -24,49 +24,50 @@ static const string vector_comparison_error_msg = "Incorrect vector sizes to com
 
 enum SpecialHand
 {
-    HighCard,
-    Pair,
-    TwoPair,
-    ThreeOfKind,
-    Straight,
-    Flush,
-    FullHouse,
-    FourOfKind,
-    StraightFlush,
-    RoyalFlush,
-    _Last
+    highCard,
+    onePair,
+    twoPair,
+    threeOfKind,
+    straight,
+    flush,
+    fullHouse,
+    fourOfKind,
+    straightFlush,
+    royalFlush,
+    last
 };
 
 enum Suit
 {
-    _Suit_None,
-    Clubs,
-    Diamonds,
-    Hearts,
-    Spades
+    suitNone,
+    clubs,
+    diamonds,
+    hearts,
+    spades
 };
 
 enum Rank
 {
-    _Rank_None,
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    Ten,
-    Jack,
-    Queen,
-    King,
-    Ace
+    rankNone,
+    two,
+    three,
+    four,
+    five,
+    six,
+    seven,
+    eight,
+    nine,
+    ten,
+    jack,
+    queen,
+    king,
+    ace
 };
 
 template<typename T>
-struct Comparable
+class Comparable
 {
+public:
     virtual bool operator>(T& cp) = 0;
     virtual bool operator==(T& cp) = 0;
     bool operator>=(T& cp)
@@ -91,31 +92,31 @@ class Card : public Comparable<Card>
 {
 public:
     inline static const unordered_map<char, Rank> rank_codes = {
-        {'2', Rank::Two},
-        {'3', Rank::Three},
-        {'4', Rank::Four},
-        {'5', Rank::Five},
-        {'6', Rank::Six},
-        {'7', Rank::Seven},
-        {'8', Rank::Eight},
-        {'9', Rank::Nine},
-        {'T', Rank::Ten},
-        {'J', Rank::Jack},
-        {'Q', Rank::Queen},
-        {'K', Rank::King},
-        {'A', Rank::Ace}
+        {'2', Rank::two},
+        {'3', Rank::three},
+        {'4', Rank::four},
+        {'5', Rank::five},
+        {'6', Rank::six},
+        {'7', Rank::seven},
+        {'8', Rank::eight},
+        {'9', Rank::nine},
+        {'T', Rank::ten},
+        {'J', Rank::jack},
+        {'Q', Rank::queen},
+        {'K', Rank::king},
+        {'A', Rank::ace}
     };
     inline static const unordered_map<char, Suit> suit_codes = {
-        {'C', Suit::Clubs},
-        {'D', Suit::Diamonds},
-        {'H', Suit::Hearts},
-        {'S', Suit::Spades}
+        {'C', Suit::clubs},
+        {'D', Suit::diamonds},
+        {'H', Suit::hearts},
+        {'S', Suit::spades}
     };
     Rank rank;
     Suit suit;
     Card() {
-        rank = Rank::_Rank_None;
-        suit = Suit::_Suit_None;
+        rank = Rank::rankNone;
+        suit = Suit::suitNone;
     }
     Card(const string& card_code) {
         rank = Card::rank_codes.at(card_code[0]);
@@ -127,19 +128,23 @@ public:
     inline bool operator==(Card& card);
 };
 
-struct Hand : public Comparable<Hand> {
+class Hand : public Comparable<Hand> {
     inline static const string card_code_pattern_string = "[23456789TJQKAtjqka][CDHScdhs]";
     inline static const regex card_code_pattern = regex(Hand::card_code_pattern_string);
+public:
     inline static const regex hand_code_pattern = regex("\\s*(?:(" + card_code_pattern_string + ")\\s+){4}(" + card_code_pattern_string + ")\\s*");
+    enum SortType {
+        ascending, descending
+    };
     vector<Card> cards;
     Hand(Card c1, Card c2, Card c3, Card c4, Card c5) {
         cards = { c1, c2, c3, c4, c5 };
-        sort("descending");
+        sort(SortType::descending);
     }
     Hand(vector<Card>& cards) : cards(cards) {
         if (cards.size() != 5)
             throw PokerException("Incorrect number of cards in a hand");
-        sort("descending");
+        sort(SortType::descending);
     }
 
     Hand(string code) {
@@ -156,23 +161,19 @@ struct Hand : public Comparable<Hand> {
         else {
             throw PokerException("Invalid hand code");
         }
-        sort("descending");
+        sort(SortType::descending);
     }
 
     Hand(char* code) : Hand(string(code)) {}
 
     /* Sorts cards in the hand. Use "ascending" or "descending" mode.*/
-    void sort(string mode="descending") {
-        if (mode == "descending") {
-            std::sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) -> bool {
-                return c1 > c2;
-                });
+    void sort(SortType mode=descending) {
+        if (mode == SortType::descending) {
+            std::sort(cards.begin(), cards.end(), std::greater<>());
         }
         else {
-            // "ascending"
-            std::sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) -> bool {
-                return c1 < c2;
-                });
+            // ascending
+            std::sort(cards.begin(), cards.end());
         }
     }
 
@@ -218,7 +219,7 @@ public:
 
 class HighCardChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::HighCard; }
+    virtual SpecialHand handType() { return SpecialHand::highCard; }
     virtual vector<Rank> check(Hand& hand) {
         vector<Rank> vr;
         for (Card& c : hand.cards)
@@ -229,7 +230,7 @@ public:
 
 class PairChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::Pair; }
+    virtual SpecialHand handType() { return SpecialHand::onePair; }
     virtual vector<Rank> check(Hand& hand) {
         Rank pair_rank;
         int pair_pos;
@@ -258,7 +259,7 @@ public:
 
 class TwoPairChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::TwoPair; }
+    virtual SpecialHand handType() { return SpecialHand::twoPair; }
     virtual vector<Rank> check(Hand& hand) {
         vector<Rank> vr;
         for (int i = 0; i < 4; i++) {
@@ -283,7 +284,7 @@ public:
 
 class ThreeOfKindChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::ThreeOfKind; }
+    virtual SpecialHand handType() { return SpecialHand::threeOfKind; }
     virtual vector<Rank> check(Hand& hand) {
         vector<Rank> triple_ranks;
         for (int i = 0; i < 3; i++) {
@@ -311,7 +312,7 @@ public:
 
 class StraightChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::Straight; }
+    virtual SpecialHand handType() { return SpecialHand::straight; }
     virtual vector<Rank> check(Hand& hand) {
         for (int i = 0; i < 4; i++)
             if (hand.cards[i].rank != hand.cards[i + 1].rank + 1)
@@ -323,7 +324,7 @@ public:
 
 class FlushChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::Flush; }
+    virtual SpecialHand handType() { return SpecialHand::flush; }
     virtual vector<Rank> check(Hand& hand) {
         for (int i = 0; i < 4; i++)
             if (hand.cards[i].suit != hand.cards[i+1].suit)
@@ -337,7 +338,7 @@ public:
 
 class FullHouseChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::FullHouse; }
+    virtual SpecialHand handType() { return SpecialHand::fullHouse; }
     virtual vector<Rank> check(Hand& hand) {
         unordered_map<Rank, int> rank_count = count_ranks(hand);
         // If two distinct ranks were found
@@ -361,7 +362,7 @@ public:
 
 class FourOfKindChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::FourOfKind; }
+    virtual SpecialHand handType() { return SpecialHand::fourOfKind; }
     virtual vector<Rank> check(Hand& hand) {
         unordered_map<Rank, int> rank_count = count_ranks(hand);
         // If two distinct ranks were found
@@ -385,7 +386,7 @@ public:
 
 class StraightFlushChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::StraightFlush; }
+    virtual SpecialHand handType() { return SpecialHand::straightFlush; }
     virtual vector<Rank> check(Hand& hand) {
         if (FlushChecker().check(hand) != vector<Rank>()) {
             return StraightChecker().check(hand);
@@ -397,10 +398,10 @@ public:
 
 class RoyalFlushChecker : public SpecialHandChecker {
 public:
-    virtual SpecialHand handType() { return SpecialHand::RoyalFlush; }
+    virtual SpecialHand handType() { return SpecialHand::royalFlush; }
     virtual vector<Rank> check(Hand& hand) {
         vector<Rank> straight_vr = StraightFlushChecker().check(hand);
-        if (straight_vr == vector<Rank>({ Ace })) {
+        if (straight_vr == vector<Rank>({ ace })) {
             return straight_vr;
         }
         else
