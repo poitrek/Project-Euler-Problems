@@ -132,11 +132,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="54_poker_hands.cpp" />
+    <ClCompile Include="Card.cpp" />
+    <ClCompile Include="Hand.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="model3.cpp" />
+    <ClCompile Include="SpecialHandChecker.cpp" />
+    <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="54_poker_hands.hpp" />
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="Comparable.h" />
+    <ClInclude Include="Hand.h" />
+    <ClInclude Include="SpecialHandChecker.h" />
+    <ClInclude Include="tools.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="p054_poker.txt" />

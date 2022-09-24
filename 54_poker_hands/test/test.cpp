@@ -1,5 +1,6 @@
 #include "pch.h"
 
+using namespace poker_hands;
 TEST(TestCaseName, TestName) {
   EXPECT_EQ(1, 1);
   EXPECT_TRUE(true);
@@ -35,27 +36,27 @@ TEST(CardTest, CardComparisonEqualRanks) {
 }
 
 TEST(RankVectorTest, RankVectorComparison1) {
-	vector<Rank> vr1 = {
+	std::vector<Rank> vr1 = {
 		Rank::four, Rank::eight,
 		Rank::queen, Rank::nine
 	};
-	vector<Rank> vr2 = {
+	std::vector<Rank> vr2 = {
 		Rank::four, Rank::eight,
 		Rank::queen, Rank::seven
 	};
 	EXPECT_TRUE(vr1 > vr2);
 	EXPECT_FALSE(vr1 == vr2);
-	vector<Rank> vr3(vr1);
+	std::vector<Rank> vr3(vr1);
 	EXPECT_TRUE(vr3 == vr1);
 	EXPECT_FALSE(vr3 > vr1);
 }
 
 TEST(RankVectorTest, RankVectorComparison2) {
-	vector<Rank> vr1{
+	std::vector<Rank> vr1{
 		Rank::four, Rank::eight,
 		Rank::queen, Rank::nine
 	};
-	vector<Rank> vr2{
+	std::vector<Rank> vr2{
 		Rank::four, Rank::eight,
 		Rank::queen
 	};
@@ -103,38 +104,38 @@ TEST(HandTest, HandInitFromCode1) {
 TEST(HandCheckerTest, HighCardChecker1) {
 	Hand h("9C 5D KS 2H JC");
 	EXPECT_TRUE(HighCardChecker().check(h) ==
-		vector<Rank>({ king, jack, nine, five, two }));
+		std::vector<Rank>({ king, jack, nine, five, two }));
 }
 
 TEST(HandCheckerTest, PairChecker1) {
 	Hand h("6D 2H JC 6H 4C");
 	EXPECT_EQ(PairChecker().check(h),
-		vector<Rank>({ six, jack, four, two }));
+		std::vector<Rank>({ six, jack, four, two }));
 }
 
 TEST(HandCheckerTest, PairChecker2) {
 	Hand h("QD 2H JC 6H 4C");
 	EXPECT_EQ(PairChecker().check(h),
-		vector<Rank>());
+		std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, TwoPairChecker1) {
 	Hand h("KC 3S TH KS 3D");
 	EXPECT_EQ(TwoPairChecker().check(h),
-		vector<Rank>({ king, three, ten }));
+		std::vector<Rank>({ king, three, ten }));
 }
 
 TEST(HandCheckerTest, TwoPairChecker2) {
 	Hand h1("KC 3S TH QS 3D");
 	Hand h2("KC KD KS TH 3D");
-	EXPECT_EQ(TwoPairChecker().check(h1), vector<Rank>());
-	EXPECT_EQ(TwoPairChecker().check(h2), vector<Rank>());
+	EXPECT_EQ(TwoPairChecker().check(h1), std::vector<Rank>());
+	EXPECT_EQ(TwoPairChecker().check(h2), std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, ThreeofKindChecker1) {
 	Hand h("2S QC QD TC QH");
 	EXPECT_EQ(ThreeOfKindChecker().check(h),
-		vector<Rank>({ queen, ten, two }));
+		std::vector<Rank>({ queen, ten, two }));
 }
 
 TEST(HandCheckerTest, ThreeofKindChecker2) {
@@ -142,26 +143,26 @@ TEST(HandCheckerTest, ThreeofKindChecker2) {
 	Hand h2("2S QC QD 2C QH");
 	Hand h3("2S 3C QD 2C QH");
 	Hand h4("QS QC QD 2C QH");
-	EXPECT_EQ(ThreeOfKindChecker().check(h1), vector<Rank>());
-	EXPECT_EQ(ThreeOfKindChecker().check(h2), vector<Rank>());
-	EXPECT_EQ(ThreeOfKindChecker().check(h3), vector<Rank>());
-	EXPECT_EQ(ThreeOfKindChecker().check(h4), vector<Rank>());
+	EXPECT_EQ(ThreeOfKindChecker().check(h1), std::vector<Rank>());
+	EXPECT_EQ(ThreeOfKindChecker().check(h2), std::vector<Rank>());
+	EXPECT_EQ(ThreeOfKindChecker().check(h3), std::vector<Rank>());
+	EXPECT_EQ(ThreeOfKindChecker().check(h4), std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, StraightChecker1) {
 	Hand h1("7D 8C 9C TS JD");
 	Hand h2("7D 8C 9C TS QD");
 	EXPECT_EQ(StraightChecker().check(h1),
-		vector<Rank> { jack });
-	EXPECT_EQ(StraightChecker().check(h2), vector<Rank>());
+		std::vector<Rank> { jack });
+	EXPECT_EQ(StraightChecker().check(h2), std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, FlushChecker1) {
 	Hand h1("7D 9D 3D AD 4D");
 	Hand h2("7C 9D 3D AD 4D");
 	EXPECT_EQ(FlushChecker().check(h1),
-		vector<Rank> ({ ace, nine, seven, four, three }));
-	EXPECT_EQ(FlushChecker().check(h2), vector<Rank>());
+		std::vector<Rank> ({ ace, nine, seven, four, three }));
+	EXPECT_EQ(FlushChecker().check(h2), std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, FullHouseChecker1) {
@@ -170,10 +171,10 @@ TEST(HandCheckerTest, FullHouseChecker1) {
 	Hand h3("6C 6D JS JC AD");
 	Hand h4("6C 6D 6S 9D 8H");
 	EXPECT_EQ(FullHouseChecker().check(h1),
-		vector<Rank>({ six, jack }));
-	EXPECT_EQ(FullHouseChecker().check(h2), vector<Rank>());
-	EXPECT_EQ(FullHouseChecker().check(h3), vector<Rank>());
-	EXPECT_EQ(FullHouseChecker().check(h4), vector<Rank>());
+		std::vector<Rank>({ six, jack }));
+	EXPECT_EQ(FullHouseChecker().check(h2), std::vector<Rank>());
+	EXPECT_EQ(FullHouseChecker().check(h3), std::vector<Rank>());
+	EXPECT_EQ(FullHouseChecker().check(h4), std::vector<Rank>());
 }
 
 TEST(HandCheckerTest, FourOfKindChecker1) {
@@ -181,9 +182,9 @@ TEST(HandCheckerTest, FourOfKindChecker1) {
 	Hand h2("6C 6D 6S JS JC");
 	Hand h3("6C 6D 6S 9D 8H");
 	EXPECT_EQ(FourOfKindChecker().check(h1),
-		vector<Rank>({ six, jack }));
-	EXPECT_EQ(FourOfKindChecker().check(h2), vector<Rank>());
-	EXPECT_EQ(FourOfKindChecker().check(h3), vector<Rank>());
+		std::vector<Rank>({ six, jack }));
+	EXPECT_EQ(FourOfKindChecker().check(h2), std::vector<Rank>());
+	EXPECT_EQ(FourOfKindChecker().check(h3), std::vector<Rank>());
 }
 
 
@@ -193,10 +194,10 @@ TEST(HandCheckerTest, StraightFlushChecker1) {
 	Hand h3("7C 8C TC JC QC");
 	Hand h4("6C 5D 6S 9D 8H");
 	EXPECT_EQ(StraightFlushChecker().check(h1),
-		vector<Rank>({ jack }));
-	EXPECT_EQ(StraightFlushChecker().check(h2), vector<Rank>());
-	EXPECT_EQ(StraightFlushChecker().check(h3), vector<Rank>());
-	EXPECT_EQ(StraightFlushChecker().check(h4), vector<Rank>());
+		std::vector<Rank>({ jack }));
+	EXPECT_EQ(StraightFlushChecker().check(h2), std::vector<Rank>());
+	EXPECT_EQ(StraightFlushChecker().check(h3), std::vector<Rank>());
+	EXPECT_EQ(StraightFlushChecker().check(h4), std::vector<Rank>());
 }
 
 
@@ -206,14 +207,14 @@ TEST(HandCheckerTest, RoyalFlushChecker1) {
 	Hand h3("TC JD QC KC AC");
 	Hand h4("6C 5D 6S 9D 8H");
 	EXPECT_EQ(RoyalFlushChecker().check(h1),
-		vector<Rank>({ ace }));
-	EXPECT_EQ(RoyalFlushChecker().check(h2), vector<Rank>());
-	EXPECT_EQ(RoyalFlushChecker().check(h3), vector<Rank>());
-	EXPECT_EQ(RoyalFlushChecker().check(h4), vector<Rank>());
+		std::vector<Rank>({ ace }));
+	EXPECT_EQ(RoyalFlushChecker().check(h2), std::vector<Rank>());
+	EXPECT_EQ(RoyalFlushChecker().check(h3), std::vector<Rank>());
+	EXPECT_EQ(RoyalFlushChecker().check(h4), std::vector<Rank>());
 }
 
 TEST(HandTest, HighestSpecialHand1) {
-	vector<Hand> hands = {
+	std::vector<Hand> hands = {
 		Hand("TS 8H QD AC 5C"),
 		Hand("3C 2D 8H 8C 4D"),
 		Hand("4S 8H 4C QD QC"),
@@ -225,7 +226,7 @@ TEST(HandTest, HighestSpecialHand1) {
 		Hand("4D 5D 6D 7D 8D"),
 		Hand("QS KS AS TS JS")
 	};
-	vector <pair<SpecialHand, vector<Rank>>> highest_special_hands = {
+	std::vector <std::pair<SpecialHand, std::vector<Rank>>> highest_special_hands = {
 		{ SpecialHand::highCard, {ace, queen, ten, eight, five}},
 		{ SpecialHand::onePair, {eight, four, three, two}},
 		{ SpecialHand::twoPair, {queen, four, eight}},
