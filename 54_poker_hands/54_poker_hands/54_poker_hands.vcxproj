@@ -135,6 +135,7 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Hand.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="SpecialHandChecker.cpp" />
     <ClCompile Include="tools.cpp" />
   </ItemGroup>

@@ -7,48 +7,48 @@ namespace poker_hands {
 
     enum Suit
     {
-        suitNone,
-        clubs,
-        diamonds,
-        hearts,
-        spades
+        kSuitNone,
+        kClubs,
+        kDiamonds,
+        kHearts,
+        kSpades
     };
 
     enum Rank
     {
-        rankNone,
-        two,
-        three,
-        four,
-        five,
-        six,
-        seven,
-        eight,
-        nine,
-        ten,
-        jack,
-        queen,
-        king,
-        ace
+        kRankNone,
+        kTwo,
+        kThree,
+        kFour,
+        kFive,
+        kSix,
+        kSeven,
+        kEight,
+        kNine,
+        kTen,
+        kJack,
+        kQueen,
+        kKing,
+        kAce
     };
 
     class Card : public Comparable<Card>
     {
     public:
-        static const std::unordered_map<char, Rank> rank_codes;
-        static const std::unordered_map<char, Suit> suit_codes;
-        Rank rank;
-        Suit suit;
+        static const std::unordered_map<char, Rank> kRankCodes;
+        static const std::unordered_map<char, Suit> kSuitCodes;
+        Rank rank_;
+        Suit suit_;
         Card() {
-            rank = Rank::rankNone;
-            suit = Suit::suitNone;
+            rank_ = Rank::kRankNone;
+            suit_ = Suit::kSuitNone;
         }
         Card(const std::string& card_code) {
-            rank = Card::rank_codes.at(card_code[0]);
-            suit = Card::suit_codes.at(card_code[1]);
+            rank_ = Card::kRankCodes.at(card_code[0]);
+            suit_ = Card::kSuitCodes.at(card_code[1]);
         }
         Card(Rank rank, Suit suit)
-            : rank(rank), suit(suit) {}
+            : rank_(rank), suit_(suit) {}
         bool operator>(Card& card);
         bool operator==(Card& card);
     };

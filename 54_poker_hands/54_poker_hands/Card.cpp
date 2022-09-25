@@ -2,35 +2,35 @@
 
 namespace poker_hands {
 
-    const std::unordered_map<char, Rank> Card::rank_codes = {
-        {'2', Rank::two},
-        {'3', Rank::three},
-        {'4', Rank::four},
-        {'5', Rank::five},
-        {'6', Rank::six},
-        {'7', Rank::seven},
-        {'8', Rank::eight},
-        {'9', Rank::nine},
-        {'T', Rank::ten},
-        {'J', Rank::jack},
-        {'Q', Rank::queen},
-        {'K', Rank::king},
-        {'A', Rank::ace}
+    const std::unordered_map<char, Rank> Card::kRankCodes = {
+        {'2', Rank::kTwo},
+        {'3', Rank::kThree},
+        {'4', Rank::kFour},
+        {'5', Rank::kFive},
+        {'6', Rank::kSix},
+        {'7', Rank::kSeven},
+        {'8', Rank::kEight},
+        {'9', Rank::kNine},
+        {'T', Rank::kTen},
+        {'J', Rank::kJack},
+        {'Q', Rank::kQueen},
+        {'K', Rank::kKing},
+        {'A', Rank::kAce}
     };
 
-    const std::unordered_map<char, Suit> Card::suit_codes = {
-        {'C', Suit::clubs},
-        {'D', Suit::diamonds},
-        {'H', Suit::hearts},
-        {'S', Suit::spades}
+    const std::unordered_map<char, Suit> Card::kSuitCodes = {
+        {'C', Suit::kClubs},
+        {'D', Suit::kDiamonds},
+        {'H', Suit::kHearts},
+        {'S', Suit::kSpades}
     };
 
     bool Card::operator>(Card& card) {
-        return this->rank > card.rank || (this->rank == card.rank && this->suit > card.suit);
+        return this->rank_ > card.rank_ || (this->rank_ == card.rank_ && this->suit_ > card.suit_);
     }
 
     bool Card::operator==(Card& card) {
-        return this->rank == card.rank && this->suit == card.suit;
+        return this->rank_ == card.rank_ && this->suit_ == card.suit_;
     }
 
 }
