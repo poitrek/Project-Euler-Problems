@@ -7,21 +7,21 @@ namespace poker_hands {
     class Comparable
     {
     public:
-        virtual bool operator>(T& cp) = 0;
-        virtual bool operator==(T& cp) = 0;
-        bool operator>=(T& cp)
+        virtual bool operator>(const T& cp) = 0;
+        virtual bool operator==(const T& cp) = 0;
+        bool operator>=(const T& cp)
         {
             return (*this) > cp || (*this) == cp;
         }
-        bool operator<(T& cp)
+        bool operator<(const T& cp)
         {
             return !(*this >= cp);
         }
-        bool operator<=(T& cp)
+        bool operator<=(const T& cp)
         {
             return !(*this > cp);
         }
-        bool operator!=(T& cp)
+        bool operator!=(const T& cp)
         {
             return !(*this == cp);
         }

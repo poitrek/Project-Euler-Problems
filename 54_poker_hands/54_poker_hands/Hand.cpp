@@ -24,8 +24,8 @@ namespace poker_hands {
         std::shared_ptr<RoyalFlushChecker>(new RoyalFlushChecker),
     };
 
-    Hand::Hand(Card c1, Card c2, Card c3, Card c4, Card c5) {
-        cards_ = { c1, c2, c3, c4, c5 };
+    Hand::Hand(Card c1, Card c2, Card c3, Card c4, Card c5)
+    : cards_({ c1, c2, c3, c4, c5 }) {
         Sort(SortType::kDescending);
     }
 
@@ -38,7 +38,6 @@ namespace poker_hands {
     Hand::Hand(std::string code) {
         std::smatch hcp_match;
         if (std::regex_match(code, hcp_match, Hand::kHandCodePattern)) {
-            std::smatch ccp_match;
             auto match_begin =
                 std::sregex_iterator(code.begin(), code.end(), Hand::kCardCodePattern);
             auto match_end = std::sregex_iterator();
@@ -62,7 +61,7 @@ namespace poker_hands {
         }
     }
 
-    std::pair<SpecialHand, std::vector<Rank>> Hand::HighestSpecialHand() {
+    std::pair<SpecialHand, std::vector<Rank>> Hand::HighestSpecialHand() const {
         SpecialHand highest_sh;
         std::vector<Rank> highest_check_result;
         // Iterate through all special hand checkers
@@ -76,7 +75,7 @@ namespace poker_hands {
         return std::pair<SpecialHand, std::vector<Rank>>(highest_sh, highest_check_result);
     }
 
-    bool Hand::operator>(Hand& hand) {
+    bool Hand::operator>(const Hand& hand) {
         auto p1 = this->HighestSpecialHand();
         auto p2 = hand.HighestSpecialHand();
         if (p1.first != p2.first)
@@ -86,7 +85,7 @@ namespace poker_hands {
         }
     }
 
-    bool Hand::operator==(Hand& hand) {
+    bool Hand::operator==(const Hand& hand) {
         auto p1 = this->HighestSpecialHand();
         auto p2 = hand.HighestSpecialHand();
         return p1.first == p2.first && p1.second == p2.second;

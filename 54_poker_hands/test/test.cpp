@@ -68,10 +68,10 @@ TEST(HandTest, HandSort1) {
 	Hand h(Card(Rank::kJack, Suit::kClubs), Card(Rank::kSix, Suit::kHearts),
 		Card(Rank::kThree, Suit::kHearts), Card(Rank::kKing, Suit::kDiamonds),
 		Card(Rank::kTen, Suit::kSpades));
-	EXPECT_TRUE(h.cards_.front() == Card(Rank::kKing, Suit::kDiamonds));
-	EXPECT_TRUE(h.cards_.back() == Card(Rank::kThree, Suit::kHearts));
+	EXPECT_TRUE(h.GetCards().front() == Card(Rank::kKing, Suit::kDiamonds));
+	EXPECT_TRUE(h.GetCards().back() == Card(Rank::kThree, Suit::kHearts));
 	// Compilation error: "const left-hand operand"
-	//EXPECT_EQ(h.cards_.back(), Card(Rank::kThree, Suit::kHearts));
+	//EXPECT_EQ(h.GetCards().back(), Card(Rank::kThree, Suit::kHearts));
 }
 
 TEST(HandTest, HandCodeRegex1) {

@@ -49,8 +49,8 @@ namespace poker_hands {
         }
         Card(Rank rank, Suit suit)
             : rank_(rank), suit_(suit) {}
-        bool operator>(Card& card);
-        bool operator==(Card& card);
+        bool operator>(const Card& card) override;
+        bool operator==(const Card& card) override;
     };
 
 }
