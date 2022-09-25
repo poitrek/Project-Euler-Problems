@@ -34,62 +34,62 @@ namespace poker_hands {
 
     class HighCardChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kHighCard; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kHighCard; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class PairChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kOnePair; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kOnePair; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class TwoPairChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kTwoPair; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kTwoPair; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class ThreeOfKindChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kThreeOfKind; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kThreeOfKind; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class StraightChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kStraight; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kStraight; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class FlushChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kFlush; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kFlush; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class FullHouseChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kFullHouse; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kFullHouse; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class FourOfKindChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kFourOfKind; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kFourOfKind; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class StraightFlushChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kStraightFlush; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kStraightFlush; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
     class RoyalFlushChecker : public SpecialHandChecker {
     public:
-        virtual SpecialHand HandType() { return SpecialHand::kRoyalFlush; }
-        virtual std::vector<Rank> Check(const Hand& hand);
+        virtual SpecialHand HandType() override { return SpecialHand::kRoyalFlush; }
+        virtual std::vector<Rank> Check(const Hand& hand) override;
     };
 
 }
