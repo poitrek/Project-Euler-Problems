@@ -25,11 +25,11 @@ namespace poker_hands {
         {'S', Suit::kSpades}
     };
 
-    bool Card::operator>(Card& card) {
+    bool Card::operator>(const Card& card) {
         return this->rank_ > card.rank_ || (this->rank_ == card.rank_ && this->suit_ > card.suit_);
     }
 
-    bool Card::operator==(Card& card) {
+    bool Card::operator==(const Card& card) {
         return this->rank_ == card.rank_ && this->suit_ == card.suit_;
     }
 
