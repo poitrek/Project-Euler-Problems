@@ -10,6 +10,16 @@ namespace poker_hands {
 
     enum SpecialHand;
 
+    class HandInitializationException : public std::exception {
+    public:
+        std::string message;
+        HandInitializationException(std::string message) : message(message) {
+        }
+        virtual const char* what() const noexcept {
+            return message.c_str();
+        }
+    };
+
     class Hand : public Comparable<Hand> {
         static const std::string kCardCodePatternString;
         static const std::regex kCardCodePattern;

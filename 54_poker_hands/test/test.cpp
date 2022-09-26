@@ -1,6 +1,7 @@
 #include "pch.h"
 
 using namespace poker_hands;
+
 TEST(TestCaseName, TestName) {
   EXPECT_EQ(1, 1);
   EXPECT_TRUE(true);
@@ -60,8 +61,8 @@ TEST(RankVectorTest, RankVectorComparison2) {
 		Rank::kFour, Rank::kEight,
 		Rank::kQueen
 	};
-	EXPECT_THROW(vr1 == vr2, PokerException);
-	EXPECT_THROW(vr1 > vr2, PokerException);
+	EXPECT_THROW(vr1 == vr2, VectorComparisonError);
+	EXPECT_THROW(vr1 > vr2, VectorComparisonError);
 }
 
 TEST(HandTest, HandSort1) {

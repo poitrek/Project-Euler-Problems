@@ -31,7 +31,7 @@ namespace poker_hands {
 
     Hand::Hand(std::vector<Card>& cards) : cards_(cards) {
         if (cards.size() != kNumberOfCardsInHand)
-            throw PokerException("Incorrect number of cards in a hand");
+            throw HandInitializationException("Incorrect number of cards in a hand");
         Sort(SortType::kDescending);
     }
 
@@ -46,7 +46,7 @@ namespace poker_hands {
             }
         }
         else {
-            throw PokerException("Invalid hand code");
+            throw HandInitializationException("Invalid hand code");
         }
         Sort(SortType::kDescending);
     }
